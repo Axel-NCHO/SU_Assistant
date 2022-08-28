@@ -10,3 +10,9 @@ class InputInterface(IOInterface):
 
     def listen(self):
         return super(InputInterface, self).listen()
+
+    def capture_image(self):
+        return super(InputInterface, self).capture_image()
+
+    def capture_video(self):
+        return super(InputInterface, self).capture_video()

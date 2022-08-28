@@ -10,3 +10,6 @@ class OutputInterface(IOInterface):
 
     def speak(self, text):
         super(OutputInterface, self).speak(text)
+
+    def play_video(self, videoPath):
+        super(OutputInterface, self).play_video(videoPath)

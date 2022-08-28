@@ -5,7 +5,4 @@ input_device = In()
 output_device = Out()
 
 
-while True:
-    saying = input_device.listen()
-    print(saying)
-    output_device.speak(saying)
+imagePath = input_device.capture_image()
