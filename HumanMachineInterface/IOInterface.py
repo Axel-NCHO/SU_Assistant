@@ -2,9 +2,10 @@
 # Modules for abstract class
 from abc import ABC, abstractmethod
 
-# Modules for recognition and synthesis alias senses
+# Modules for senses
 import speech_recognition as sr
 import pyttsx3
+import keyboard
 
 # Modules for media management
 import cv2 as cv
@@ -13,6 +14,7 @@ from pyautogui import screenshot
 # In-project modules
 from Exceptions.IOException import ModeException, NullReferenceException
 from HumanMachineInterface.IOMode import IOMode
+from HumanMachineInterface.KeyboardKeys import KeyboardKeys
 import FileManager
 
 
@@ -40,7 +42,10 @@ class IOInterface(ABC):
             self.__Recognizer = sr.Recognizer()
             # eyes
             self.__Camera = None
+            # touch
+            self.__Keyboard_Key: KeyboardKeys = None
         else:
+            # mouth
             self.__Speaker = pyttsx3.init()
 
 
@@ -187,3 +192,20 @@ class IOInterface(ABC):
 
         except Exception as e:
             print(e)
+
+
+    def touch(self, keyboardkey: KeyboardKeys):
+        try:
+            check_mode(self.__mode.value, "Input")
+            self.__Keyboard_Key = keyboardkey
+            keyboard.press_and_release(self.__Keyboard_Key.value)
+            self.__Keyboard_Key = None
+
+        except ModeException as e:
+            print(e.message)
+        except Exception as e:
+            print(e)
+
+
+
+

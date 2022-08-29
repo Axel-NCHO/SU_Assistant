@@ -1,6 +1,7 @@
 # In-project modules
 from HumanMachineInterface.IOInterface import *
 from HumanMachineInterface.IOMode import *
+from HumanMachineInterface.KeyboardKeys import KeyboardKeys
 
 
 class InputInterface(IOInterface):
@@ -39,3 +40,16 @@ class InputInterface(IOInterface):
         :return: The path to the file
         """
         return super(InputInterface, self).capture_screenshot()
+
+    def save_as(self):
+        super(InputInterface, self).touch(KeyboardKeys.SAVE_AS)
+
+    def print(self):
+        super(InputInterface, self).touch(KeyboardKeys.PRINT)
+
+    def switch_window(self):
+        super(InputInterface, self).touch(KeyboardKeys.SWITCH_WINDOW)
+
+    def switch_tab(self):
+        super(InputInterface, self).touch(KeyboardKeys.SWITCH_TAB)
+
