@@ -2,25 +2,27 @@
 # Modules for abstract class
 from abc import ABC, abstractmethod
 
-# Modules for file management
-import os
-
 # Modules for recognition and synthesis alias senses
 import speech_recognition as sr
 import pyttsx3
+
+# Modules for media management
 import cv2 as cv
+from pyautogui import screenshot
 
 # In-project modules
-from Exceptions.IOException import ModeException
+from Exceptions.IOException import ModeException, NullReferenceException
+from HumanMachineInterface.IOMode import IOMode
+import FileManager
 
 
 # ------------ END MODULES ----------------
 # ------------ STATIC FUNCTIONS -------------------
-def check_mode(mode1, mode2):
+def check_mode(mode1: str, mode2: str):
     if mode1 != mode2:
         raise ModeException()
 
-def show_image(image, title="Image"):
+def show_image(image, title: str ="Image"):
     cv.imshow(title, image)
     cv.waitKey(0)
     cv.destroyWindow(title)
@@ -30,32 +32,29 @@ def show_image(image, title="Image"):
 
 class IOInterface(ABC):
 
-    def __init__(self, mode, language="fr-FR"):
-        self.IOLanguage = language
-        self.mode = mode
+    def __init__(self, mode: IOMode, language: str ="fr-FR"):
+        self.__IOLanguage = language
+        self.__mode = mode
         if mode.value == "Input":
             # ears
-            self.Recognizer = sr.Recognizer()
+            self.__Recognizer = sr.Recognizer()
             # eyes
-            self.Camera = None
-            # default
-            self.defaultImageName = "image.jpg"
-            self.defaultVideoName = "video.avi"
+            self.__Camera = None
         else:
-            self.Speaker = pyttsx3.init()
+            self.__Speaker = pyttsx3.init()
 
 
-    def listen(self):
+    def listen(self) -> str:
         try:
-            check_mode(self.mode.value, "Input")
+            check_mode(self.__mode.value, "Input")
             with sr.Microphone() as speech_source:
-                self.Recognizer.adjust_for_ambient_noise(speech_source, duration=0.3)
+                self.__Recognizer.adjust_for_ambient_noise(speech_source, duration=0.3)
 
                 print("J'écoute ...")
-                speech = self.Recognizer.listen(speech_source)
+                speech = self.__Recognizer.listen(speech_source)
 
                 # Using google to recognize audio
-                text = self.Recognizer.recognize_google(speech, language=self.IOLanguage)
+                text = self.__Recognizer.recognize_google(speech, language=self.__IOLanguage)
                 text = text.lower()
 
                 return text
@@ -71,80 +70,120 @@ class IOInterface(ABC):
         except sr.UnknownValueError:
             return "Veuillez repéter"
 
+        except Exception as e:
+            print(e)
 
-    def open_camera(self, input=None):
-        if input is None:
-            self.Camera = cv.VideoCapture(0)
-        else:
-            self.Camera = cv.VideoCapture(input)
 
-        if (self.Camera is None) or (not self.Camera.isOpened()):
-            print("Impossible d'ouvrir la caméra")
-            exit(1)
-
-    def capture_image(self):
+    def open_camera(self, input: str =None):
         try:
-            check_mode(self.mode.value, "Input")
+            if input is None:
+                self.__Camera = cv.VideoCapture(0)
+            else:
+                self.__Camera = cv.VideoCapture(input)
+
+            if not self.__Camera.isOpened():
+                print("Impossible d'ouvrir la caméra")
+                exit(1)
+        except Exception as e:
+            print(e)
+
+    def close_camera(self):
+        self.__Camera.release()
+        self.__Camera = None
+
+
+    def capture_image(self) -> str:
+        try:
+            check_mode(self.__mode.value, "Input")
             self.open_camera()
 
-            exit_state, image = self.Camera.read()
+            exit_state, image = self.__Camera.read()
             if exit_state:
-                cv.imwrite(self.defaultImageName, image)
+                fileName = FileManager.save_image(image)
                 show_image(image)
-                self.Camera.release()
-                return self.defaultImageName
+                self.close_camera()
+                return fileName
 
         except ModeException as e:
             print(e.message)
+            return None
 
-    def play_video(self, videoPath):
+        except Exception as e:
+            print(e)
+            return None
+
+    def play_video(self, videoPath: str):
         try:
-
-            check_mode(self.mode.value, "Output")
+            check_mode(self.__mode.value, "Output")
             self.open_camera(videoPath)
 
-            while self.Camera.isOpened():
-                exit_state, frame = self.Camera.read()
+            while self.__Camera.isOpened():
+                exit_state, frame = self.__Camera.read()
                 cv.imshow('frame', frame)
                 if cv.waitKey(25) == ord('q'):
                     break
-            self.Camera.release()
+            self.close_camera()
             cv.destroyAllWindows()
 
         except ModeException as e:
             print(e.message)
 
+        except Exception as e:
+            print(e)
 
-    def capture_video(self):
+
+    def capture_video(self) -> str:
         try:
-            check_mode(self.mode.value, "Input")
+            check_mode(self.__mode.value, "Input")
             self.open_camera()
 
-            fourcc = cv.VideoWriter_fourcc(*'XVID')
-            out = cv.VideoWriter(self.defaultVideoName, fourcc, 30.0, (640, 480))
+            FileManager.config_video_saver()
 
-            while self.Camera.isOpened():
-                exit_state, frame = self.Camera.read()
+            while self.__Camera.isOpened():
+                exit_state, frame = self.__Camera.read()
                 if exit_state:
-                    out.write(frame)
+                    FileManager.save_video_frame_by_frame(frame)
                     cv.imshow('frame', frame)
                     if cv.waitKey(1) == ord('q'):
                         break
 
-            self.Camera.release()
-            out.release()
+            self.close_camera()
+            FileManager.reset_video_saver()
             cv.destroyAllWindows()
-            return self.defaultVideoName
+            return FileManager.video_name
 
         except ModeException as e:
             print(e.message)
 
+        except NullReferenceException as e:
+            print(e.message)
 
-    def speak(self, text):
+        except Exception as e:
+            print(e)
+
+    def capture_screenshot(self) -> str:
         try:
-            check_mode(self.mode.value, "Output")
-            self.Speaker.say("J'ai entendu " + text)
-            self.Speaker.runAndWait()
+            check_mode(self.__mode.value, "Input")
+            screensht = screenshot()
+            image = FileManager.convert_img_to_cv_format(screensht)
+            return FileManager.save_image(image)
 
         except ModeException as e:
             print(e.message)
+            return None
+        except Exception as e:
+            print(e)
+            return None
+
+
+    def speak(self, text: str):
+        try:
+            check_mode(self.__mode.value, "Output")
+            self.__Speaker.say("J'ai entendu " + text)
+            self.__Speaker.runAndWait()
+
+        except ModeException as e:
+            print(e.message)
+
+        except Exception as e:
+            print(e)

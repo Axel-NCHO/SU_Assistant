@@ -4,15 +4,38 @@ from HumanMachineInterface.IOMode import *
 
 
 class InputInterface(IOInterface):
+    """
+    Input Interface: \n
+    Performs all human to machine actions: input actions
+    """
 
-    def __init__(self, language="fr-FR"):
+    def __init__(self, language: str ="fr-FR"):
         super(InputInterface, self).__init__(IOMode.INPUT, language)
 
-    def listen(self):
+    def listen(self) -> str:
+        """
+        Listen to vocal commands \n
+        :return: The text transcript of the vocal command
+        """
         return super(InputInterface, self).listen()
 
-    def capture_image(self):
+    def capture_image(self) -> str:
+        """
+        Take a photo using default camera \n
+        :return: The path to the image
+        """
         return super(InputInterface, self).capture_image()
 
-    def capture_video(self):
+    def capture_video(self) -> str:
+        """
+        Take a video using default camera \n
+        :return: The path to the video
+        """
         return super(InputInterface, self).capture_video()
+
+    def capture_screenshot(self) -> str:
+        """
+        Take a screenshot of the whole screen \n
+        :return: The path to the file
+        """
+        return super(InputInterface, self).capture_screenshot()
