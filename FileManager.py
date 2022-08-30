@@ -1,6 +1,8 @@
 import cv2 as cv
 from numpy import array
 from os.path import exists
+from os import mkdir
+from shutil import move
 from Exceptions.IOException import NullReferenceException
 
 # default names
@@ -39,6 +41,16 @@ def save_image(image):
 
     except Exception as e:
         print(e)
+
+
+def move_file(file_name: str, destination: str, new_file_name: str = None):
+    if not exists(destination):
+        mkdir(destination)
+    dest = destination + "\\" + file_name
+    if new_file_name is not None:
+        dest = destination + "\\" + new_file_name
+
+    move(file_name, dest)
 
 
 def config_video_saver():

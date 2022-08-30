@@ -7,7 +7,7 @@ from HumanMachineInterface.KeyboardKeys import KeyboardKeys
 class InputInterface(IOInterface):
     """
     Input Interface: \n
-    Performs all human to machine actions: input actions
+    Performs all human to machine actions: input_source actions
     """
 
     def __init__(self, language: str ="fr-FR"):

@@ -44,6 +44,8 @@ class IOInterface(ABC):
             self.__Camera = None
             # touch
             self.__Keyboard_Key: KeyboardKeys = None
+            # states
+            self.camera_in_use = False
         else:
             # mouth
             self.__Speaker = pyttsx3.init()
@@ -89,12 +91,14 @@ class IOInterface(ABC):
             if not self.__Camera.isOpened():
                 print("Impossible d'ouvrir la caméra")
                 exit(1)
+            self.camera_in_use = True
         except Exception as e:
             print(e)
 
     def close_camera(self):
         self.__Camera.release()
         self.__Camera = None
+        self.camera_in_use = False
 
 
     def capture_image(self) -> str:
@@ -184,7 +188,7 @@ class IOInterface(ABC):
     def speak(self, text: str):
         try:
             check_mode(self.__mode.value, "Output")
-            self.__Speaker.say("J'ai entendu " + text)
+            self.__Speaker.say(text)
             self.__Speaker.runAndWait()
 
         except ModeException as e:
