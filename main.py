@@ -1,27 +1,37 @@
 import threading
-import time
+
+import Global
+from Global import get_username, get_language, reformat_lang, ET
 
 import HumanMachineInterface.Interface
-from Brain.Network import Network, MediaCenter, get_language
+from Brain.Network import Network, MediaCenter
 from HumanMachineInterface.InputInterface import InputInterface
 from HumanMachineInterface.OutputInterface import OutputInterface
 
+
 def wait_for_request():
-    while True:
+    while inp.is_listening():
         speech = inp.listen()
         print(speech)
         net.parse_instruction(speech)
+    print("Stopped waiting for request.")
 
 
-lang = ""
+def great_user():
+    HumanMachineInterface.OutputInterface.speech = root.find("greeting").find(reformat_lang(lang)).find("start").text + \
+                                                   " " + user_name + ", " + \
+                                                   root.find("greeting").find(reformat_lang(lang)).find("end").text
 
+
+tree = ET.parse("HumanMachineInterface/StandardSpeech.xml")
+root = tree.getroot()
+Global.tree = tree
+Global.root = root
+
+user_name = get_username()
 print("Setting up language")
-set_lang = get_language()
-if set_lang == "fr":
-    lang = "fr-FR"
-elif set_lang == "en":
-    lang = "en-US"
-
+lang = get_language()  # must be reformatted if not called by In/Out interface
+Global.lang = lang
 print("Setting up input interface")
 inp = InputInterface(lang)
 print("Setting up output interface")
@@ -29,16 +39,19 @@ out = OutputInterface(5, 60, 9, lang)
 print("Setting up media center")
 media_center = MediaCenter(inp, out)
 print("Setting up central network")
-net = Network(media_center)
-
-# Créer et afficher l'interface
-# create_interface_thread = threading.Thread(target=create_interface)
-# create_interface_thread.start()
+net = Network(reformat_lang(lang), media_center)
 
 # Great user
-# HumanMachineInterface.OutputInterface.speech = "Bonjour, je suis à vôtre disposition"
+great_user()
 
 wait_for_request_thread = threading.Thread(target=wait_for_request)
 wait_for_request_thread.start()
 
 out.show()
+
+# Executed when out is closed
+# As it's the main process, all the other threads will exit too as they are daemons.
+# But the process that listens for new requests is not a daemon. It must be explicitly stopped.
+# If all threads are not stopped, the program will continue to run in background even if the main
+# process (the Tk window) has exited.
+inp.stop_listening()

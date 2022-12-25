@@ -11,11 +11,13 @@ import keyboard
 import cv2 as cv
 from pyautogui import screenshot
 
+import HumanMachineInterface.OutputInterface
 # In-project modules
 from Exceptions.IOException import ModeException, NullReferenceException
 from HumanMachineInterface.IOMode import IOMode
 from HumanMachineInterface.KeyboardKeys import KeyboardKeys
 import FileManager
+import Global
 
 
 # ------------ END MODULES ----------------
@@ -49,7 +51,20 @@ class IOInterface(ABC):
         else:
             # mouth
             self.__Speaker = pyttsx3.init()
+            self.set_voice_language()
 
+    def set_voice_language(self):
+        try:
+            check_mode(self.__mode.value, "Output")
+            gender = "VoiceGenderFemale"
+            for voice in self.__Speaker.getProperty('voices'):
+                if self.__IOLanguage in voice.languages and voice.gender == gender:
+                    self.__Speaker.setProperty('voice', voice.id)
+                    return
+            # raise RuntimeError("Language '{}' for gender '{}' not found".format(self.__IOLanguage, gender))
+
+        except ModeException as e:
+            print("Mode exceptio,: ", e.message)
 
     def listen(self) -> str:
         try:
@@ -91,7 +106,8 @@ class IOInterface(ABC):
 
             if not self.__Camera.isOpened():
                 print("Impossible d'ouvrir la caméra")
-                exit(1)
+                HumanMachineInterface.OutputInterface.speech = "Impossible d'ouvrir la caméra."
+                # exit(1)
             self.camera_in_use = True
         except Exception as e:
             print(e)
@@ -110,6 +126,9 @@ class IOInterface(ABC):
             exit_state, image = self.__Camera.read()
             if exit_state:
                 fileName = FileManager.save_image(image)
+                text_to_say_after = Global.root.find("take_photo").find("after").find(
+                    Global.reformat_lang(Global.lang)).text
+                HumanMachineInterface.OutputInterface.speech = text_to_say_after
                 show_image(image)
                 self.close_camera()
                 return fileName
@@ -156,7 +175,9 @@ class IOInterface(ABC):
                     cv.imshow('frame', frame)
                     if cv.waitKey(1) == ord('q'):
                         break
-
+            text_to_say_after = Global.root.find("record_video").find("after").find(
+                Global.reformat_lang(Global.lang)).text
+            HumanMachineInterface.OutputInterface.speech = text_to_say_after
             self.close_camera()
             FileManager.reset_video_saver()
             cv.destroyAllWindows()

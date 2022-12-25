@@ -2,6 +2,7 @@
 import random
 import threading
 import time
+import Global
 
 from HumanMachineInterface.IOInterface import *
 from HumanMachineInterface.IOMode import *
@@ -20,7 +21,7 @@ class OutputInterface(IOInterface):
     def __init__(self, min_size, max_size, num_sticks, language: str = "fr-FR"):
         super(OutputInterface, self).__init__(IOMode.OUTPUT, language)
         self.root = tk.Tk()
-        self.root.attributes("-topmost", True)
+        self.configure_ui()
         self.min_size = min_size
         self.max_size = max_size
         self.num_sticks = num_sticks
@@ -43,11 +44,18 @@ class OutputInterface(IOInterface):
         # Démarrer l'animation
         # self.animate()
 
+    def configure_ui(self):
+        self.root.title(Global.UI_TITLE)
+        self.root.resizable(0, 0)
+        self.root.attributes("-topmost", True)
+        # self.root.attributes("-toolwindow", True)  # removing resize and reduce buttons but it's quite ugly
+
     def speak(self, text: str):
         """
         Speak information(s) with installed voices \n
         :param text: Information to be spoken
         """
+        self.is_animated = True
         self.animate()
         super(OutputInterface, self).speak(text)
         self.stop()
@@ -63,26 +71,25 @@ class OutputInterface(IOInterface):
         while not is_shown:
             pass
 
-        self.is_animated = True
+        if self.is_animated:
 
-        # Modifier la taille de chaque bâtonnet de manière aléatoire
-        for i, stick in enumerate(self.sticks):
-            size = random.uniform(self.min_size, self.max_size)
-            x1 = 50 + (i * 20) + i * 7
-            y1 = 100 - size
-            x2 = 70 + (i * 20) + i * 7
-            y2 = 100 + size
-            self.canvas.coords(stick, x1, y1, x2, y2)
+            # Modifier la taille de chaque bâtonnet de manière aléatoire
+            for i, stick in enumerate(self.sticks):
+                size = random.uniform(self.min_size, self.max_size)
+                x1 = 50 + (i * 20) + i * 7
+                y1 = 100 - size
+                x2 = 70 + (i * 20) + i * 7
+                y2 = 100 + size
+                self.canvas.coords(stick, x1, y1, x2, y2)
 
-        # Répéter l'animation toutes les 100 millisecondes
-        self.root.after(100, self.animate)
+            # Répéter l'animation toutes les 100 millisecondes
+            self.root.after(100, self.animate)
 
     def stop(self):
-        if self.is_animated:
-            self.is_animated = False
+        self.is_animated = False
 
         # Arrêter l'animation en annulant l'appel de la méthode "animate" programmé avec "after"
-        self.root.after_cancel(self.root.after_idle(self.animate))
+        # self.root.after_cancel(self.root.after_idle(self.animate))
 
         # Remettre chaque bâtonnet à sa taille minimale
         for i, stick in enumerate(self.sticks):
@@ -96,6 +103,7 @@ class OutputInterface(IOInterface):
         global is_shown
         # Watchman pour gérer l'animation en fonction des ordres envoyés par les autres modules
         wait_for_order_thread = threading.Thread(target=self.wait_for_order)
+        wait_for_order_thread.setDaemon(True)
         wait_for_order_thread.start()
         is_shown = True
         # Démarrer la boucle d'événements de tkinter

@@ -47,4 +47,5 @@ class DataManagementCenter(ABC):
 
     def start_watch(self):
         watch_man = threading.Thread(target=self.watch)
+        watch_man.setDaemon(True)
         watch_man.start()

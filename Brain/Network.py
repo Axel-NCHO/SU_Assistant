@@ -5,17 +5,10 @@ from Brain.Instructions import MediaInstruction
 from Brain.Patterns import *
 
 
-def get_language():
-    file = open("Store/Language", 'r')
-    lang = file.readline()
-    file.close()
-    return lang
-
-
 class Network:
 
-    def __init__(self, media_center: MediaCenter):
-        self.__language = get_language()
+    def __init__(self, language: str, media_center: MediaCenter):
+        self.__language = language
         self.__nlp = self.get_vocab()
         self.__matcher = self.config_matcher()
         '''
@@ -63,6 +56,7 @@ class Network:
                           '''
         # matcher.add("PHOTO_PATTERN", [photo_pattern])
         return matcher
+
     '''
     def config_system_matcher(self):
         matcher = Matcher(self.__nlp.vocab)

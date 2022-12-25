@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!-- This file contains the standard speech said by SU for each service provided -->
+
+<su_standard_speech xmlns="">
+    <greeting>
+        <fr>
+            <start>Bonjour</start>
+            <end>je suis à vôtre disposition</end>
+        </fr>
+        <en>
+            <start>Hello</start>
+            <end>I'm available for your needs</end>
+        </en>
+    </greeting>
+    <take_photo>
+        <before>
+            <fr>Soyez prêt, je vous prend en photo</fr>
+            <en>Be ready, I will take a photo</en>
+        </before>
+        <after>
+            <fr>ça y est !</fr>
+            <en>I'm done !</en>
+        </after>
+    </take_photo>
+    <record_video>
+        <before>
+            <fr>Ok, je patientez quelques secondes. Appuyez la touche q pour terminer.</fr>
+            <en>I'm filming</en>
+        </before>
+        <after>
+            <fr>c'est dans la boîte !</fr>
+            <en>It's in the box !</en>
+        </after>
+    </record_video>
+</su_standard_speech>
