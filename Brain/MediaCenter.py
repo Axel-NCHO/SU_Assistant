@@ -1,9 +1,11 @@
 import FileManager
+import HumanMachineInterface.OutputInterface
 from Brain.DataManagementCenter import DataManagementCenter
 from Brain.Instructions import MediaInstruction
 from Brain.InstructionArgument import Task
 from HumanMachineInterface.InputInterface import InputInterface
 from HumanMachineInterface.OutputInterface import OutputInterface
+import Global
 
 
 class MediaCenter(DataManagementCenter):
@@ -21,6 +23,9 @@ class MediaCenter(DataManagementCenter):
             instruction_task, entry, out = self.parse_instruction(instruction)
 
             if instruction_task is Task.TAKE_IMAGE:
+                text_to_say_before = Global.root.find("take_photo").find("before").find(
+                    Global.reformat_lang(Global.lang)).text
+                HumanMachineInterface.OutputInterface.speech = text_to_say_before
                 image = self.__Input_Device.capture_image()
                 if out is not None:
                     FileManager.move_file(image, out)
@@ -29,6 +34,9 @@ class MediaCenter(DataManagementCenter):
                 if out is not None:
                     FileManager.move_file(image, out)
             elif instruction_task is Task.RECORD_VIDEO:
+                text_to_say_before = Global.root.find("record_video").find("before").find(
+                    Global.reformat_lang(Global.lang)).text
+                HumanMachineInterface.OutputInterface.speech = text_to_say_before
                 video = self.__Input_Device.capture_video()
                 if out is not None:
                     FileManager.move_file(video, out)

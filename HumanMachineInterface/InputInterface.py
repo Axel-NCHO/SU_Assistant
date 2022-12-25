@@ -12,6 +12,7 @@ class InputInterface(IOInterface):
 
     def __init__(self, language: str ="fr-FR"):
         super(InputInterface, self).__init__(IOMode.INPUT, language)
+        self.__is_listening = True
 
     def listen(self) -> str:
         """
@@ -19,6 +20,12 @@ class InputInterface(IOInterface):
         :return: The text transcript of the vocal command
         """
         return super(InputInterface, self).listen()
+
+    def stop_listening(self):
+        self.__is_listening = False
+
+    def is_listening(self):
+        return self.__is_listening
 
     def capture_image(self) -> str:
         """
