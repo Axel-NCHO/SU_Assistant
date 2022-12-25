@@ -9,14 +9,14 @@ from Exceptions.IOException import NullReferenceException
 DEFAULT_IMAGE_NAME = "image"
 DEFAULT_VIDEO_NAME = "video"
 IMAGE_FILE_EXTENSION = ".png"
-VIDEO_FILE_EXTENSION = ".avi"
+VIDEO_FILE_EXTENSION = ".mp4"
 
 # indexes
 imageIndex = 0
 videoIndex = 0
 
 # video config
-video_codec = cv.VideoWriter_fourcc(*'XVID')
+video_codec = cv.VideoWriter_fourcc(*'MP42')
 video_name = DEFAULT_VIDEO_NAME + str(videoIndex) + VIDEO_FILE_EXTENSION
 FPS = 30.0
 FRAME_SIZE = (640, 480)

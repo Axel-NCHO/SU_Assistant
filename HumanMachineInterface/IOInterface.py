@@ -67,7 +67,7 @@ class IOInterface(ABC):
                 return text
 
         except ModeException as e:
-            print(e.message)
+            print("Mode exception: ", e.message)
             return ""
 
         except sr.RequestError as e:
@@ -78,7 +78,8 @@ class IOInterface(ABC):
             return "Veuillez repéter"
 
         except Exception as e:
-            print(e)
+            print("Exception: \n", e)
+            return ""
 
 
     def open_camera(self, input: str =None):
