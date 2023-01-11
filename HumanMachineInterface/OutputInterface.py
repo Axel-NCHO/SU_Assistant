@@ -2,13 +2,13 @@
 import random
 import threading
 import time
-import Global
 
 from HumanMachineInterface.IOInterface import *
 from HumanMachineInterface.IOMode import *
 import tkinter as tk
 
 speech = ""
+text_displayed = ""
 is_shown = False
 
 
@@ -21,6 +21,7 @@ class OutputInterface(IOInterface):
     def __init__(self, min_size, max_size, num_sticks, language: str = "fr-FR"):
         super(OutputInterface, self).__init__(IOMode.OUTPUT, language)
         self.root = tk.Tk()
+        self.text_box = tk.Text(self.root, width=50, height=2)
         self.configure_ui()
         self.min_size = min_size
         self.max_size = max_size
@@ -30,6 +31,7 @@ class OutputInterface(IOInterface):
         # Créer un canvas pour afficher les bâtonnets
         self.canvas = tk.Canvas(self.root, width=350, height=200)
         self.canvas.pack()
+        self.text_box.pack()
 
         # Afficher les bâtonnets au démarrage
         self.sticks = []
@@ -46,8 +48,12 @@ class OutputInterface(IOInterface):
 
     def configure_ui(self):
         self.root.title(Global.UI_TITLE)
+        self.root.config(padx=5, pady=5)
         self.root.resizable(0, 0)
         self.root.attributes("-topmost", True)
+        self.text_box.insert(tk.END, "Waiting for a request ...")
+        self.text_box.config(state="disabled")
+        self.text_box.bindtags([str(self.text_box), str(self.root), "all"])
         # self.root.attributes("-toolwindow", True)  # removing resize and reduce buttons but it's quite ugly
 
     def speak(self, text: str):
@@ -109,10 +115,24 @@ class OutputInterface(IOInterface):
         # Démarrer la boucle d'événements de tkinter
         self.root.mainloop()
 
+    def do_speak(self, text):
+        self.speak(text)
+
     def wait_for_order(self):
         global speech
+        global text_displayed
         while True:
             if speech != "" and not self.is_animated:
-                self.speak(speech)
+                text_displayed = speech
+                speak_thread = threading.Thread(target=self.do_speak, args=[speech])
+                speak_thread.setDaemon(True)
+                speak_thread.start()
+            if text_displayed != "":
+                self.text_box.config(state="normal")
+                self.text_box.delete("1.0", tk.END)
+                self.text_box.insert(tk.END, text_displayed)
+                self.text_box.config(state="disabled")
+                text_displayed = ""
+            if speech != "":
                 speech = ""
-            time.sleep(1)
+            time.sleep(.5)

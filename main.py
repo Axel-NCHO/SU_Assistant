@@ -1,9 +1,24 @@
+import os
+'''
+import openai
+# openai.organization = "Personal"
+openai.api_key = "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"
+response = openai.Completion.create(
+    model="text-davinci-003",
+    prompt="Comment se brosser les dents ?",
+    temperature=0.6
+)
+
+print(response["choices"])
+
+'''
+
 import threading
 
 import Global
 from Global import get_username, get_language, reformat_lang, ET
 
-import HumanMachineInterface.Interface
+import HumanMachineInterface.OutputInterface
 from Brain.Network import Network, MediaCenter
 from HumanMachineInterface.InputInterface import InputInterface
 from HumanMachineInterface.OutputInterface import OutputInterface
@@ -13,6 +28,7 @@ def wait_for_request():
     while inp.is_listening():
         speech = inp.listen()
         print(speech)
+        HumanMachineInterface.OutputInterface.text_displayed = speech
         net.parse_instruction(speech)
     print("Stopped waiting for request.")
 
