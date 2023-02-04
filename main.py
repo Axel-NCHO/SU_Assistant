@@ -1,18 +1,3 @@
-import os
-'''
-import openai
-# openai.organization = "Personal"
-openai.api_key = "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"
-response = openai.Completion.create(
-    model="text-davinci-003",
-    prompt="Comment se brosser les dents ?",
-    temperature=0.6
-)
-
-print(response["choices"])
-
-'''
-
 import threading
 
 import Global
