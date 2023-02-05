@@ -1,5 +1,8 @@
 import spacy
 from spacy.matcher import Matcher
+
+import Global
+import HumanMachineInterface.OutputInterface
 from Brain.MediaCenter import *
 from Brain.Instructions import MediaInstruction
 from Brain.Patterns import *
@@ -17,6 +20,10 @@ class Network:
         self.__net_matcher = self.config_net_matcher()
         '''
         self.__media_center = media_center
+        self.__attempts_count: int = 0
+        self.__MAX_ATTEMPTS_COUNT: int = 3
+        self.__NAME: str = "alice"
+        self.__stand_by = False
 
     def get_vocab(self):
         if self.__language == "fr":
@@ -25,9 +32,27 @@ class Network:
             return spacy.load("en_core_web_sm", disable=["parser"])
         return spacy.blank("fr")
 
-    def parse_instruction(self, instruction):
+    def parse_instruction(self, instruction: str):
 
         text = instruction
+        if text == self.__NAME:
+            HumanMachineInterface.OutputInterface.speech = Global.root.find("pay_attention").find(self.__language).text
+            if self.__stand_by:
+                self.__attempts_count = 0
+                self.__stand_by = False
+                print("out of stand-by")
+            return
+        elif not text.startswith(self.__NAME):
+            if self.__stand_by:
+                print("no")
+                return
+        else:
+            text = self.__trim_name(text)
+            if self.__stand_by:
+                self.__attempts_count = 0
+                self.__stand_by = False
+                print("out of stand-by")
+
         doc = self.__nlp(text)
 
         # Find instruction group
@@ -42,6 +67,13 @@ class Network:
 
         else:
             print("no")
+            self.__attempts_count += 1
+            if self.__attempts_count == self.__MAX_ATTEMPTS_COUNT:
+                self.__stand_by = True
+                print("stand by ...")
+
+    def __trim_name(self, text: str):
+        return text[len(self.__NAME)+1:]
 
     def config_matcher(self):
         matcher = Matcher(self.__nlp.vocab)

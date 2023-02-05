@@ -3,6 +3,10 @@
 <!-- This file contains the standard speech said by SU for each service provided -->
 
 <su_standard_speech xmlns="">
+    <pay_attention>
+        <fr>oui, </fr>
+        <en>yes, </en>
+    </pay_attention>
     <greeting>
         <fr>
             <start>Bonjour</start>
@@ -26,7 +30,7 @@
     <record_video>
         <before>
             <fr>Ok, je patientez quelques secondes. Appuyez la touche q pour terminer.</fr>
-            <en>I'm filming</en>
+            <en>I'm filming, touch q to finish.</en>
         </before>
         <after>
             <fr>c'est dans la boîte !</fr>

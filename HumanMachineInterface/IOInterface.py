@@ -56,7 +56,7 @@ class IOInterface(ABC):
     def set_voice_language(self):
         try:
             check_mode(self.__mode.value, "Output")
-            gender = "VoiceGenderFemale"
+            gender = "VoiceGenderMale"
             for voice in self.__Speaker.getProperty('voices'):
                 if self.__IOLanguage in voice.languages and voice.gender == gender:
                     self.__Speaker.setProperty('voice', voice.id)
