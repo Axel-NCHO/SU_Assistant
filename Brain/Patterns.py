@@ -7,19 +7,24 @@
 # patterns names
 PHOTO_PATTERN = "PHOTO_PATTERN"
 VIDEO_PATTERN = "VIDEO_PATTERN"
+SCREENSHOT_PATTERN = "SCREENSHOT_PATTERN"
 
 patterns = {"fr":
                 {PHOTO_PATTERN: [{"LEMMA": "prendre", "POS": "VERB", "OP": "*"}, {"POS": "DET", "OP": "*"},
                                  {"LOWER": "photo"}],
                  VIDEO_PATTERN: [{"LEMMA": "faire", "POS": "VERB", "OP": "*"}, {"POS": "DET", "OP": "*"},
-                                 {"LOWER": "vidéo"}]
+                                 {"LOWER": "vidéo"}],
+                 SCREENSHOT_PATTERN: [{"LEMMA": "faire", "POS": "VERB", "OP": "*"}, {"POS": "DET", "OP": "*"},
+                                      {"LOWER": "capture"}, {"LOWER": "d'écran", "OP": "*"}]
                  },
 
             "en":
                 {PHOTO_PATTERN: [{"LEMMA": "take", "POS": "VERB", "OP": "*"}, {"POS": "DET", "OP": "*"},
                                  {"LOWER": "photo"}],
                  VIDEO_PATTERN: [{"LEMMA": "record", "POS": "VERB", "OP": "*"}, {"POS": "DET", "OP": "*"},
-                                 {"LOWER": "video"}]
+                                 {"LOWER": "video"}],
+                 SCREENSHOT_PATTERN: [{"LEMMA": "take", "POS": "VERB", "OP": "*"}, {"POS": "DET", "OP": "*"},
+                                      {"LOWER": "screenshot"}]
                  }
             }
 """

@@ -197,6 +197,10 @@ class IOInterface(ABC):
             check_mode(self.__mode.value, "Input")
             screensht = screenshot()
             image = FileManager.convert_img_to_cv_format(screensht)
+            text_to_say_after = Global.root.find("take_screenshot").find("after").find(
+                Global.reformat_lang(Global.lang)).text
+            HumanMachineInterface.OutputInterface.speech = text_to_say_after
+            show_image(image, title="screenshot")
             return FileManager.save_image(image)
 
         except ModeException as e:
