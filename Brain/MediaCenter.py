@@ -30,6 +30,9 @@ class MediaCenter(DataManagementCenter):
                 if out is not None:
                     FileManager.move_file(image, out)
             elif instruction_task is Task.TAKE_SCREENSHOT:
+                text_to_say_before = Global.root.find("take_screenshot").find("before").find(
+                    Global.reformat_lang(Global.lang)).text
+                HumanMachineInterface.OutputInterface.speech = text_to_say_before
                 image = self.__Input_Device.capture_screenshot()
                 if out is not None:
                     FileManager.move_file(image, out)

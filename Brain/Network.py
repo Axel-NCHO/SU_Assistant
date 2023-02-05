@@ -60,10 +60,13 @@ class Network:
 
         if len(matches) != 0:
             patterns_matched_ids = [doc.vocab.strings[match[0]] for match in matches]
+            # media
             if PHOTO_PATTERN in patterns_matched_ids:
                 self.__media_center.get_instruction(MediaInstruction(Task.TAKE_IMAGE, None, None))
             if VIDEO_PATTERN in patterns_matched_ids:
                 self.__media_center.get_instruction(MediaInstruction(Task.RECORD_VIDEO, None, None))
+            if SCREENSHOT_PATTERN in patterns_matched_ids:
+                self.__media_center.get_instruction(MediaInstruction(Task.TAKE_SCREENSHOT, None, None))
 
         else:
             print("no")

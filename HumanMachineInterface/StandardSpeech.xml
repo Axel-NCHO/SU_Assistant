@@ -27,6 +27,16 @@
             <en>I'm done !</en>
         </after>
     </take_photo>
+    <take_screenshot>
+        <before>
+            <fr>Ok, je capture l'intégralité de l'écran</fr>
+            <en>Okay, I'm taking a screenshot</en>
+        </before>
+        <after>
+            <fr>ça y est ! Vous pouvez l'enregistrer en faisant control s</fr>
+            <en>I'm done ! You can save it by doing control s</en>
+        </after>
+    </take_screenshot>
     <record_video>
         <before>
             <fr>Ok, je patientez quelques secondes. Appuyez la touche q pour terminer.</fr>
