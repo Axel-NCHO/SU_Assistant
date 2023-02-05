@@ -1,15 +1,32 @@
-# In-project modules
-import random
 import threading
 import time
+import sys
+from PyQt5 import QtWidgets, QtCore
+from PyQt5.QtGui import QMovie
+from PIL import Image
 
 from HumanMachineInterface.IOInterface import *
 from HumanMachineInterface.IOMode import *
-import tkinter as tk
 
-speech = ""
-text_displayed = ""
+speech = ""     # add a semaphore on speech
 is_shown = False
+
+
+def smooth_gif_resize(gif, frameWidth, frameHeight):
+    gif = Image.open(gif)
+    gifWidth0, gifHeight0 = gif.size
+
+    widthRatio = frameWidth / gifWidth0
+    heightRatio = frameHeight / gifHeight0
+
+    if widthRatio >= heightRatio:
+        gifWidth1 = gifWidth0 * heightRatio
+        gifHeight1 = frameHeight
+        return gifWidth1, gifHeight1
+
+    gifWidth1 = frameWidth
+    gifHeight1 = gifHeight0 * widthRatio
+    return gifWidth1, gifHeight1
 
 
 class OutputInterface(IOInterface):
@@ -18,53 +35,64 @@ class OutputInterface(IOInterface):
     Performs all machine to human operations: output actions
     """
 
-    def __init__(self, min_size, max_size, num_sticks, language: str = "fr-FR"):
+    def __init__(self, language: str = "fr-FR"):
         super(OutputInterface, self).__init__(IOMode.OUTPUT, language)
-        self.root = tk.Tk()
-        self.text_box = tk.Text(self.root, width=50, height=2)
-        self.configure_ui()
-        self.min_size = min_size
-        self.max_size = max_size
-        self.num_sticks = num_sticks
-        self.is_animated = False
+        self.__app = QtWidgets.QApplication(sys.argv)
 
-        # Créer un canvas pour afficher les bâtonnets
-        self.canvas = tk.Canvas(self.root, width=350, height=200)
-        self.canvas.pack()
-        self.text_box.pack()
+        # create invisible widget
+        self.__window = QtWidgets.QWidget()
+        self.__window.setAttribute(QtCore.Qt.WA_TranslucentBackground)
+        self.__window.setWindowFlags(QtCore.Qt.FramelessWindowHint | QtCore.Qt.WindowStaysOnTopHint | QtCore.Qt.Tool)
+        self.__window.setFixedSize(300, 300)
 
-        # Afficher les bâtonnets au démarrage
-        self.sticks = []
-        for i in range(self.num_sticks):
-            x1 = 50 + (i * 20) + i * 7
-            y1 = 100 - self.min_size
-            x2 = 70 + (i * 20) + i * 7
-            y2 = 100 + self.min_size
-            stick = self.canvas.create_rectangle(x1, y1, x2, y2, fill="blue", width=0)
-            self.sticks.append(stick)
+        self.__invisible_bg = QtWidgets.QWidget(self.__window)
+        self.__invisible_bg.setStyleSheet('QWidget{background-color: white}')
+        self.__invisible_bg.setObjectName('vc')
+        self.__invisible_bg.setFixedSize(250, 250)
+        self.__invisible_bg.setStyleSheet('QWidget#vc{background-color: transparent}')
+        self.__layout = QtWidgets.QGridLayout()
 
-        # Démarrer l'animation
-        # self.animate()
+        # add a close button
+        '''
+        self.__close_button = QtWidgets.QPushButton()
+        self.__close_button.setText('close window')
+        self.__close_button.clicked.connect(lambda: self.__app.exit(0))
+        self.__layout.addWidget(self.__close_button)
+        '''
 
-    def configure_ui(self):
-        self.root.title(Global.UI_TITLE)
-        self.root.config(padx=5, pady=5)
-        self.root.resizable(0, 0)
-        self.root.attributes("-topmost", True)
-        self.text_box.insert(tk.END, "Waiting for a request ...")
-        self.text_box.config(state="disabled")
-        self.text_box.bindtags([str(self.text_box), str(self.root), "all"])
-        # self.root.attributes("-toolwindow", True)  # removing resize and reduce buttons but it's quite ugly
+        # add a close button as label
+        self.__close_label = QtWidgets.QLabel()
+        self.__close_label.setText("x")
+        self.__close_label.setStyleSheet("background-color: transparent; color: white;")
+        self.__close_label.setAlignment(QtCore.Qt.AlignRight)
+        self.__close_label.mousePressEvent = self.__close
+        self.__layout.addWidget(self.__close_label)
+
+        # set qmovie as label
+        self.__label = QtWidgets.QLabel()
+        self.__movie = QMovie("Store/Media/ui.gif")
+        self.__movie_size = QtCore.QSize(*smooth_gif_resize("Store/Media/ui.gif", 200, 200))
+        self.__movie.setScaledSize(self.__movie_size)
+        self.__label.setMovie(self.__movie)
+        self.__label.setAlignment(QtCore.Qt.AlignCenter)
+        self.__movie.start()
+        self.__layout.addWidget(self.__label)
+        self.__invisible_bg.setLayout(self.__layout)
+
+        # Set position of the ui to the bottom right corner
+        self.__ag = QtWidgets.QDesktopWidget().availableGeometry()
+        self.__sg = QtWidgets.QDesktopWidget().screenGeometry()
+        self.__widget = self.__window.geometry()
+        self.__x = self.__ag.width() - self.__widget.width()
+        self.__y = 2 * self.__ag.height() - self.__sg.height() - self.__widget.height()
+        self.__window.move(self.__x, self.__y)
 
     def speak(self, text: str):
         """
         Speak information(s) with installed voices \n
         :param text: Information to be spoken
         """
-        self.is_animated = True
-        self.animate()
         super(OutputInterface, self).speak(text)
-        self.stop()
 
     def play_video(self, videoPath: str):
         """
@@ -73,66 +101,27 @@ class OutputInterface(IOInterface):
         """
         super(OutputInterface, self).play_video(videoPath)
 
-    def animate(self):
-        while not is_shown:
-            pass
-
-        if self.is_animated:
-
-            # Modifier la taille de chaque bâtonnet de manière aléatoire
-            for i, stick in enumerate(self.sticks):
-                size = random.uniform(self.min_size, self.max_size)
-                x1 = 50 + (i * 20) + i * 7
-                y1 = 100 - size
-                x2 = 70 + (i * 20) + i * 7
-                y2 = 100 + size
-                self.canvas.coords(stick, x1, y1, x2, y2)
-
-            # Répéter l'animation toutes les 100 millisecondes
-            self.root.after(100, self.animate)
-
-    def stop(self):
-        self.is_animated = False
-
-        # Arrêter l'animation en annulant l'appel de la méthode "animate" programmé avec "after"
-        # self.root.after_cancel(self.root.after_idle(self.animate))
-
-        # Remettre chaque bâtonnet à sa taille minimale
-        for i, stick in enumerate(self.sticks):
-            x1 = 50 + (i * 20) + i * 7
-            y1 = 100 - self.min_size
-            x2 = 70 + (i * 20) + i * 7
-            y2 = 100 + self.min_size
-            self.canvas.coords(stick, x1, y1, x2, y2)
-
     def show(self):
         global is_shown
-        # Watchman pour gérer l'animation en fonction des ordres envoyés par les autres modules
-        wait_for_order_thread = threading.Thread(target=self.wait_for_order)
-        wait_for_order_thread.setDaemon(True)
-        wait_for_order_thread.start()
+        # Watchman to take into account speech inquiries from other modules
+        wait_for_speech_thread = threading.Thread(target=self.wait_for_speech)
+        wait_for_speech_thread.setDaemon(True)
+        wait_for_speech_thread.start()
         is_shown = True
-        # Démarrer la boucle d'événements de tkinter
-        self.root.mainloop()
 
-    def do_speak(self, text):
-        self.speak(text)
+        self.__window.show()
+        self.__app.exec()
 
-    def wait_for_order(self):
+    def wait_for_speech(self):
         global speech
-        global text_displayed
         while True:
-            if speech != "" and not self.is_animated:
-                text_displayed = speech
-                speak_thread = threading.Thread(target=self.do_speak, args=[speech])
+            if speech != "":
+                speak_thread = threading.Thread(target=self.speak, args=[speech])
                 speak_thread.setDaemon(True)
                 speak_thread.start()
-            if text_displayed != "":
-                self.text_box.config(state="normal")
-                self.text_box.delete("1.0", tk.END)
-                self.text_box.insert(tk.END, text_displayed)
-                self.text_box.config(state="disabled")
-                text_displayed = ""
             if speech != "":
                 speech = ""
             time.sleep(.5)
+
+    def __close(self, event):
+        self.__app.exit(0)

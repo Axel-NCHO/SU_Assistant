@@ -36,7 +36,7 @@ Global.lang = lang
 print("Setting up input interface")
 inp = InputInterface(lang)
 print("Setting up output interface")
-out = OutputInterface(5, 60, 9, lang)
+out = OutputInterface(lang)
 print("Setting up media center")
 media_center = MediaCenter(inp, out)
 print("Setting up central network")
