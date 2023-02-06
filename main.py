@@ -4,7 +4,7 @@ import Global
 from Global import get_username, get_language, reformat_lang, ET
 
 import HumanMachineInterface.OutputInterface
-from Brain.Network import Network, MediaCenter
+from Brain.Network import Network, MediaCenter, SystemCenter
 from HumanMachineInterface.InputInterface import InputInterface
 from HumanMachineInterface.OutputInterface import OutputInterface
 
@@ -13,7 +13,6 @@ def wait_for_request():
     while inp.is_listening():
         speech = inp.listen()
         print(speech)
-        HumanMachineInterface.OutputInterface.text_displayed = speech
         net.parse_instruction(speech)
     print("Stopped waiting for request.")
 
@@ -37,10 +36,11 @@ print("Setting up input interface")
 inp = InputInterface(lang)
 print("Setting up output interface")
 out = OutputInterface(lang)
-print("Setting up media center")
+print("Setting up processing centers")
 media_center = MediaCenter(inp, out)
+system_center = SystemCenter(inp)
 print("Setting up central network")
-net = Network(reformat_lang(lang), media_center)
+net = Network(reformat_lang(lang), media_center, system_center)
 
 # Great user
 great_user()

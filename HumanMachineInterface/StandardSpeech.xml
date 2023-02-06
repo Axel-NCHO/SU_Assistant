@@ -47,4 +47,24 @@
             <en>It's in the box !</en>
         </after>
     </record_video>
+    <tell_time>
+        <before>
+            <fr>Il est </fr>
+            <en>It's </en>
+        </before>
+        <between>
+            <fr>et </fr>
+            <en>and </en>
+        </between>
+        <after>
+            <hours>
+                <fr>heures </fr>
+                <en>hours </en>
+            </hours>
+            <minutes>
+                <fr>minutes</fr>
+                <en>minutes</en>
+            </minutes>
+        </after>
+    </tell_time>
 </su_standard_speech>

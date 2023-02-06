@@ -18,11 +18,15 @@ class Task(Enum):
 
     # System
     OPEN = "Open"
-    TELL_TIME = "Tell time"                     # TODO: Tell time
-    TELL_Date = "Tell date"                     # TODO: Tell date
-    WRITE = "Write"                             # TODO: Write text in a text box
-    RENAME = "Rename"                           # TODO: Rename a file or a directory
-    MAKE_REVIEW = "Make review"                 # TODO: Review of system infos
+    TELL_TIME = "Tell time"                     # Tell time
+    TELL_Date = "Tell date"                     # Tell date
+    WRITE = "Write"                             # Write text in a text box
+    RENAME = "Rename"                           # Rename a file or a directory
+    MAKE_REVIEW = "Make review"                 # Review of system infos
+    SAVE_AS = "save as"                         # Save a file by doing ctrl+s
+    PRINT = "print"                             # Print a file to pdf by doing ctrl+p
+    SWITCH_WINDOW = "switch window"             # Go to previous widows by doing alt+tab
+    SWITCH_TAB = "switch tab"                   # Go to previous tab by doing ctrl+tab
 
     # Converse
-    GREET = "Greet"                             # TODO: Greet user
+    GREET = "Greet"                             # Greet user

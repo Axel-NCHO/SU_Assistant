@@ -3,14 +3,14 @@ from spacy.matcher import Matcher
 
 import Global
 import HumanMachineInterface.OutputInterface
-from Brain.MediaCenter import *
+from Brain.ProcessingCenters import *
 from Brain.Instructions import MediaInstruction
 from Brain.Patterns import *
 
 
 class Network:
 
-    def __init__(self, language: str, media_center: MediaCenter):
+    def __init__(self, language: str, media_center: MediaCenter, system_center: SystemCenter):
         self.__language = language
         self.__nlp = self.get_vocab()
         self.__matcher = self.config_matcher()
@@ -20,8 +20,9 @@ class Network:
         self.__net_matcher = self.config_net_matcher()
         '''
         self.__media_center = media_center
+        self.__system_center = system_center
         self.__attempts_count: int = 0
-        self.__MAX_ATTEMPTS_COUNT: int = 3
+        self.__MAX_ATTEMPTS_COUNT: int = 5
         self.__NAME: str = "alice"
         self.__stand_by = False
 
@@ -67,6 +68,8 @@ class Network:
                 self.__media_center.get_instruction(MediaInstruction(Task.RECORD_VIDEO, None, None))
             if SCREENSHOT_PATTERN in patterns_matched_ids:
                 self.__media_center.get_instruction(MediaInstruction(Task.TAKE_SCREENSHOT, None, None))
+            if TIME_PATTERN in patterns_matched_ids:
+                self.__system_center.get_instruction(SystemInstruction(Task.TELL_TIME, None, None))
 
         else:
             print("no")
