@@ -94,6 +94,14 @@ class SystemCenter(DataManagementCenter):
                                     f"{entry[0]} {entry[1]}"  # entry[0] is the preposition used and entry[1] is
                 # the name of the region in the original language
                 HumanMachineInterface.OutputInterface.speech = text_to_say_after
+            elif instruction_task is Task.TELL_DATE:
+                date = self.__System.get_date()
+                text_to_say_after = f"{Global.root.find('tell_date').find(Global.reformat_lang(Global.lang)).text} " + \
+                                    f"{Global.en_fr_translator.translate(date[0])} " + \
+                                    f"{date[1]} " + \
+                                    f"{Global.en_fr_translator.translate(date[2])} " + \
+                                    f"{date[3]}"
+                HumanMachineInterface.OutputInterface.speech = text_to_say_after
 
             self.set_not_busy()
             self.start_watch()

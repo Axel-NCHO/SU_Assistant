@@ -1,8 +1,6 @@
 import spacy
 from spacy.matcher import Matcher
-from translate import Translator
 
-import Global
 import HumanMachineInterface.OutputInterface
 from Brain.ProcessingCenters import *
 from Brain.Instructions import MediaInstruction
@@ -15,14 +13,10 @@ class Network:
         self.__language = language
         self.__nlp = self.get_vocab()
         self.__matcher = self.config_matcher()
-        self.__translator = Translator(from_lang=self.__language, to_lang="en")
-        '''
-        self.__system_matcher = self.config_system_matcher()
-        self.__converse_matcher = self.config_converse_matcher()
-        self.__net_matcher = self.config_net_matcher()
-        '''
+
         self.__media_center = media_center
         self.__system_center = system_center
+
         self.__attempts_count: int = 0
         self.__MAX_ATTEMPTS_COUNT: int = 3
         self.__NAME: str = "alice"
@@ -80,9 +74,11 @@ class Network:
                     if token.pos_ == "ADP":
                         preposition = token.text
                 self.__system_center.get_instruction(
-                    SystemInstruction(Task.TELL_TIME_SPECIFIC, (preposition, region, self.__translator.translate(region)), None))
+                    SystemInstruction(Task.TELL_TIME_SPECIFIC, (preposition, region, Global.fr_en_translator.translate(region)), None))
             elif TIME_PATTERN in patterns_matched_ids:
                 self.__system_center.get_instruction(SystemInstruction(Task.TELL_TIME, None, None))
+            if DATE_PATTERN in patterns_matched_ids:
+                self.__system_center.get_instruction(SystemInstruction(Task.TELL_DATE, None, None))
 
         else:
             print("no")
@@ -98,37 +94,4 @@ class Network:
         matcher = Matcher(self.__nlp.vocab)
         for pattern in patterns[self.__language].items():
             matcher.add(pattern[0], [pattern[1]])
-
-        # photo_pattern = patterns[self.__language][PHOTO_PATTERN]
-        '''
-        [[{"LEMMA": "lancer", "POS": "VERB"}], [{"LEMMA": "prendre"}],
-                          [{"LEMMA": "capturer", "POS": "VERB"}],
-                          [{"LEMMA": "capturer", "POS": "NOUN"}], [{"LEMMA": "enregistrer"}], [{"LEMMA": "lire"}]]
-                          '''
-        # matcher.add("PHOTO_PATTERN", [photo_pattern])
         return matcher
-
-    '''
-    def config_system_matcher(self):
-        matcher = Matcher(self.__nlp.vocab)
-        patterns_system = [[{"LEMMA": "ouvrir", "POS": "VERB"}], [{"LEMMA": "exécuter", "POS": "VERB"}],
-                          [{"LOWER": "bilan", "POS": "NOUN"}], [{"LOWER": "check-up"}]]
-        matcher.add("SYSTEM_PATTERN", patterns_system)
-        return matcher
-
-    def config_converse_matcher(self):
-        matcher = Matcher(self.__nlp.vocab)
-        patterns_converse = [[{"LEMMA": "lancer", "POS": "VERB"}], [{"LEMMA": "prendre"}],
-                          [{"LEMMA": "capturer", "POS": "VERB"}],
-                          [{"LEMMA": "capturer", "POS": "NOUN"}], [{"LEMMA": "enregistrer"}], [{"LEMMA": "lire"}]]
-        matcher.add("MEDIA_PATTERN", patterns_converse)
-        return matcher
-
-    def config_net_matcher(self):
-        matcher = Matcher(self.__nlp.vocab)
-        patterns_media = [[{"LEMMA": "lancer", "POS": "VERB"}], [{"LEMMA": "prendre"}],
-                          [{"LEMMA": "capturer", "POS": "VERB"}],
-                          [{"LEMMA": "capturer", "POS": "NOUN"}], [{"LEMMA": "enregistrer"}], [{"LEMMA": "lire"}]]
-        matcher.add("MEDIA_PATTERN", patterns_media)
-        return matcher
-    '''

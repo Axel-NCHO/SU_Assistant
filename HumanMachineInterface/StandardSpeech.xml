@@ -67,4 +67,8 @@
             </minutes>
         </after>
     </tell_time>
+    <tell_date>
+        <fr>Nous sommes le</fr>
+        <en>Today's date is</en>
+    </tell_date>
 </su_standard_speech>

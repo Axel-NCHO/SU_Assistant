@@ -1,4 +1,5 @@
 import xml.etree.ElementTree as ET
+from translate import Translator
 
 UI_TITLE = "SU - Interface"
 
@@ -6,6 +7,8 @@ UI_TITLE = "SU - Interface"
 tree: ET = ET
 root: ET.Element = ET.Element("")
 lang: str = ""
+fr_en_translator = Translator(from_lang="fr", to_lang="en")
+en_fr_translator = Translator(from_lang="en", to_lang="fr")
 
 
 def get_language():

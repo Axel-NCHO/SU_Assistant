@@ -18,9 +18,9 @@ class Task(Enum):
 
     # System
     OPEN = "Open"
-    TELL_TIME = "Tell time"                     # Tell time
-    TELL_TIME_SPECIFIC = "Tell time specific"   # Tell time in specific region
-    TELL_Date = "Tell date"                     # Tell date
+    TELL_TIME = "Tell time"                     # Tell time                                 [OK]
+    TELL_TIME_SPECIFIC = "Tell time specific"   # Tell time in specific region              [OK]
+    TELL_DATE = "Tell date"                     # Tell date                                 [OK]
     WRITE = "Write"                             # Write text in a text box
     RENAME = "Rename"                           # Rename a file or a directory
     MAKE_REVIEW = "Make review"                 # Review of system infos
