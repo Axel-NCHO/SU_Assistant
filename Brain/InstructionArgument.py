@@ -25,9 +25,9 @@ class Task(Enum):
     RENAME = "Rename"                           # Rename a file or a directory
     MAKE_REVIEW = "Make review"                 # Review of system infos
     SAVE_AS = "save as"                         # Save a file by doing ctrl+s
-    PRINT = "print"                             # Print a file to pdf by doing ctrl+p
-    SWITCH_WINDOW = "switch window"             # Go to previous widows by doing alt+tab
-    SWITCH_TAB = "switch tab"                   # Go to previous tab by doing ctrl+tab
+    PRINT = "print"                             # Print a file to pdf by doing ctrl+p       [OK]
+    SWITCH_WINDOW = "switch window"             # Go to previous widows by doing alt+tab    [OK]
+    SWITCH_TAB = "switch tab"                   # Go to previous tab by doing ctrl+tab      [OK]
 
     # Converse
     GREET = "Greet"                             # Greet user

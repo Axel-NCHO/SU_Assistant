@@ -18,9 +18,8 @@ def wait_for_request():
 
 
 def great_user():
-    HumanMachineInterface.OutputInterface.speech = root.find("greeting").find(reformat_lang(lang)).find("start").text + \
-                                                   " " + user_name + ", " + \
-                                                   root.find("greeting").find(reformat_lang(lang)).find("end").text
+    HumanMachineInterface.OutputInterface.speech = root.find("greeting").find(reformat_lang(lang)).find(
+        "start").text + " " + user_name + ", " + root.find("greeting").find(reformat_lang(lang)).find("end").text
 
 
 tree = ET.parse("HumanMachineInterface/StandardSpeech.xml")

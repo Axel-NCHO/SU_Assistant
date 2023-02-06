@@ -7,6 +7,14 @@
         <fr>oui, </fr>
         <en>yes, </en>
     </pay_attention>
+    <agree>
+        <fr>Oui</fr>
+        <en>Yes</en>
+    </agree>
+    <understood>
+        <fr>Ok</fr>
+        <en>Ok</en>
+    </understood>
     <greeting>
         <fr>
             <start>Bonjour</start>

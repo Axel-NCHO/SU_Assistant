@@ -6,7 +6,7 @@ from Brain.DataManagementCenter import DataManagementCenter
 from Brain.Instructions import *
 from Brain.System import *
 from Brain.InstructionArgument import Task
-from HumanMachineInterface.InputInterface import InputInterface
+from HumanMachineInterface.InputInterface import InputInterface, KeyboardKeys
 from HumanMachineInterface.OutputInterface import OutputInterface
 import Global
 
@@ -102,6 +102,16 @@ class SystemCenter(DataManagementCenter):
                                     f"{Global.en_fr_translator.translate(date[2])} " + \
                                     f"{date[3]}"
                 HumanMachineInterface.OutputInterface.speech = text_to_say_after
+            elif instruction_task is Task.SWITCH_WINDOW:
+                HumanMachineInterface.OutputInterface.speech = Global.root.find('understood').find(Global.reformat_lang(Global.lang)).text
+                self.__Input_Device.touch(KeyboardKeys.SWITCH_WINDOW)
+            elif instruction_task is Task.SWITCH_TAB:
+                HumanMachineInterface.OutputInterface.speech = Global.root.find('understood').find(Global.reformat_lang(Global.lang)).text
+                self.__Input_Device.touch(KeyboardKeys.SWITCH_TAB)
+            elif instruction_task is Task.PRINT:
+                HumanMachineInterface.OutputInterface.speech = Global.root.find('understood').find(
+                    Global.reformat_lang(Global.lang)).text
+                self.__Input_Device.touch(KeyboardKeys.PRINT)
 
             self.set_not_busy()
             self.start_watch()

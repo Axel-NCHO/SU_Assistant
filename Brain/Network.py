@@ -74,11 +74,18 @@ class Network:
                     if token.pos_ == "ADP":
                         preposition = token.text
                 self.__system_center.get_instruction(
-                    SystemInstruction(Task.TELL_TIME_SPECIFIC, (preposition, region, Global.fr_en_translator.translate(region)), None))
+                    SystemInstruction(Task.TELL_TIME_SPECIFIC, (preposition, region, Global.fr_en_translator.translate(
+                        region)), None))
             elif TIME_PATTERN in patterns_matched_ids:
                 self.__system_center.get_instruction(SystemInstruction(Task.TELL_TIME, None, None))
             if DATE_PATTERN in patterns_matched_ids:
                 self.__system_center.get_instruction(SystemInstruction(Task.TELL_DATE, None, None))
+            if SWITCH_WINDOW_PATTERN in patterns_matched_ids:
+                self.__system_center.get_instruction(SystemInstruction(Task.SWITCH_WINDOW, None, None))
+            if SWITCH_TAB_PATTERN in patterns_matched_ids:
+                self.__system_center.get_instruction(SystemInstruction(Task.SWITCH_TAB, None, None))
+            if PRINT_PATTERN in patterns_matched_ids:
+                self.__system_center.get_instruction(SystemInstruction(Task.PRINT, None, None))
 
         else:
             print("no")
