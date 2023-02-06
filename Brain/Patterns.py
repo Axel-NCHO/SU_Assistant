@@ -9,6 +9,7 @@ PHOTO_PATTERN = "PHOTO_PATTERN"
 VIDEO_PATTERN = "VIDEO_PATTERN"
 SCREENSHOT_PATTERN = "SCREENSHOT_PATTERN"
 TIME_PATTERN = "Tell time pattern"
+TIME_SPECIFIC_PATTERN = "Time specific region"
 
 patterns = {"fr":
                 {PHOTO_PATTERN: [{"LEMMA": "prendre", "POS": "VERB", "OP": "*"}, {"POS": "DET", "OP": "*"},
@@ -19,7 +20,12 @@ patterns = {"fr":
                                       {"LOWER": "capture"}, {"LOWER": "d'écran", "OP": "*"}],
                  TIME_PATTERN: [{"LEMMA": "quel", "OP": "*"}, {"LOWER": "heure", "OP": "*"}, {"POS": "AUX", "OP": "*"},
                                 {"POS": "PRON", "OP": "*"}, {"POS": "PUNCT", "OP": "*"}, {"POS": "AUX", "OP": "*"},
-                                {"LEMMA": "quel", "OP": "*"}, {"LOWER": "heure", "OP": "*"}]
+                                {"LEMMA": "quel", "OP": "*"}, {"LOWER": "heure", "OP": "*"}],
+                 TIME_SPECIFIC_PATTERN: [{"LEMMA": "quel", "OP": "*"}, {"LOWER": "heure", "OP": "*"},
+                                         {"POS": "AUX", "OP": "*"}, {"POS": "PRON", "OP": "*"},
+                                         {"POS": "AUX", "OP": "*"}, {"LEMMA": "quel", "OP": "*"},
+                                         {"LOWER": "heure", "OP": "*"}, {"POS": "ADP"},
+                                         {"POS": "PROPN"}]
                  },
 
             "en":

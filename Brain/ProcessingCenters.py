@@ -73,15 +73,26 @@ class SystemCenter(DataManagementCenter):
                     entry = entry.upper()
                     if "OPERA" in entry:
                         os.system("start opera")
-            if instruction_task is Task.TELL_TIME:
-                text_to_say_before = Global.root.find("tell_time").find("before").find(Global.reformat_lang(Global.lang)).text
-                HumanMachineInterface.OutputInterface.speech = text_to_say_before
+            elif instruction_task is Task.TELL_TIME:
                 time = self.__System.get_time()
-                text_to_say_after = f"{time[0]} " + \
+                text_to_say_after = f"{Global.root.find('tell_time').find('before').find(Global.reformat_lang(Global.lang)).text}" + \
+                                    f"{time[0]} " + \
                                     f"{Global.root.find('tell_time').find('after').find('hours').find(Global.reformat_lang(Global.lang)).text} " + \
                                     f"{Global.root.find('tell_time').find('between').find(Global.reformat_lang(Global.lang)).text} " + \
                                     f"{time[1]} " + \
                                     f"{Global.root.find('tell_time').find('after').find('minutes').find(Global.reformat_lang(Global.lang)).text}"
+                HumanMachineInterface.OutputInterface.speech = text_to_say_after
+            elif instruction_task is Task.TELL_TIME_SPECIFIC:
+                time = self.__System.get_time_specific_region(entry[2].capitalize())    # entry[2] is the region
+                # translated to english because get_time_specific() needs it
+                text_to_say_after = f"{Global.root.find('tell_time').find('before').find(Global.reformat_lang(Global.lang)).text}" + \
+                                    f"{time[0]} " + \
+                                    f"{Global.root.find('tell_time').find('after').find('hours').find(Global.reformat_lang(Global.lang)).text} " + \
+                                    f"{Global.root.find('tell_time').find('between').find(Global.reformat_lang(Global.lang)).text} " + \
+                                    f"{time[1]} " + \
+                                    f"{Global.root.find('tell_time').find('after').find('minutes').find(Global.reformat_lang(Global.lang)).text} " + \
+                                    f"{entry[0]} {entry[1]}"  # entry[0] is the preposition used and entry[1] is
+                # the name of the region in the original language
                 HumanMachineInterface.OutputInterface.speech = text_to_say_after
 
             self.set_not_busy()

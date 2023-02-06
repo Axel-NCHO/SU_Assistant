@@ -1,5 +1,6 @@
 import spacy
 from spacy.matcher import Matcher
+from translate import Translator
 
 import Global
 import HumanMachineInterface.OutputInterface
@@ -14,6 +15,7 @@ class Network:
         self.__language = language
         self.__nlp = self.get_vocab()
         self.__matcher = self.config_matcher()
+        self.__translator = Translator(from_lang=self.__language, to_lang="en")
         '''
         self.__system_matcher = self.config_system_matcher()
         self.__converse_matcher = self.config_converse_matcher()
@@ -22,15 +24,15 @@ class Network:
         self.__media_center = media_center
         self.__system_center = system_center
         self.__attempts_count: int = 0
-        self.__MAX_ATTEMPTS_COUNT: int = 5
+        self.__MAX_ATTEMPTS_COUNT: int = 3
         self.__NAME: str = "alice"
         self.__stand_by = False
 
     def get_vocab(self):
         if self.__language == "fr":
-            return spacy.load("fr_core_news_sm", disable=["parser"])
+            return spacy.load("fr_core_news_sm")
         if self.__language == "en":
-            return spacy.load("en_core_web_sm", disable=["parser"])
+            return spacy.load("en_core_web_sm")
         return spacy.blank("fr")
 
     def parse_instruction(self, instruction: str):
@@ -68,7 +70,18 @@ class Network:
                 self.__media_center.get_instruction(MediaInstruction(Task.RECORD_VIDEO, None, None))
             if SCREENSHOT_PATTERN in patterns_matched_ids:
                 self.__media_center.get_instruction(MediaInstruction(Task.TAKE_SCREENSHOT, None, None))
-            if TIME_PATTERN in patterns_matched_ids:
+            if TIME_SPECIFIC_PATTERN in patterns_matched_ids:
+                # region: str = doc.ents[0].text
+                region = "France"
+                preposition = "en"
+                for token in doc:
+                    if token.pos_ == "PROPN":
+                        region = token.text
+                    if token.pos_ == "ADP":
+                        preposition = token.text
+                self.__system_center.get_instruction(
+                    SystemInstruction(Task.TELL_TIME_SPECIFIC, (preposition, region, self.__translator.translate(region)), None))
+            elif TIME_PATTERN in patterns_matched_ids:
                 self.__system_center.get_instruction(SystemInstruction(Task.TELL_TIME, None, None))
 
         else:
