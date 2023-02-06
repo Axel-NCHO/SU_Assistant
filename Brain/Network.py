@@ -1,5 +1,6 @@
 import spacy
 from spacy.matcher import Matcher
+from playsound import playsound
 
 import HumanMachineInterface.OutputInterface
 from Brain.ProcessingCenters import *
@@ -94,6 +95,7 @@ class Network:
             self.__attempts_count += 1
             if self.__attempts_count == self.__MAX_ATTEMPTS_COUNT:
                 self.__stand_by = True
+                playsound("Store/Media/water_drop.mp3")
                 print("stand by ...")
 
     def __trim_name(self, text: str):
