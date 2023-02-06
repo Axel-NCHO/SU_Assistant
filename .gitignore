@@ -1,0 +1,7 @@
+.idea
+__pycache__
+Brain/__pycache__
+Exceptions/__pycache__
+HumanMachineInterface/__pycache__
+venv
+.gitignore
