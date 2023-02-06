@@ -14,6 +14,7 @@ DATE_PATTERN = "TELL_DATE_PATTERN"
 SWITCH_WINDOW_PATTERN = "SWITCH_WINDOW__PATTERN"
 SWITCH_TAB_PATTERN = "SWITCH_TAB_PATTERN"
 PRINT_PATTERN = "PRINT_PATTERN"
+SAVE_AS_PATTERN = "SAVE_AS_PATTERN"
 
 patterns = {"fr":
                 {PHOTO_PATTERN: [{"LEMMA": "prendre", "POS": "VERB", "OP": "*"}, {"POS": "DET", "OP": "*"},
@@ -36,7 +37,9 @@ patterns = {"fr":
                  SWITCH_TAB_PATTERN: [{"LOWER": "anglais", "POS": "NOUN"}, {"LEMMA": "précédent", "POS": "ADJ"}],
                  PRINT_PATTERN: [{"LEMMA": "exporter", "POS": "VERB", "OP": "*"},
                                  {"LEMMA": "télécharger", "POS": "VERB", "OP": "*"},
-                                 {"POS": "DET", "OP": "*"}, {"LOWER": "en"}, {"LOWER": "pdf"}]
+                                 {"POS": "DET", "OP": "*"}, {"LOWER": "en"}, {"LOWER": "pdf"}],
+                 SAVE_AS_PATTERN: [{"LEMMA": "télécharger", "POS": "VERB"}, {"POS": "DET", "OP": "*"},
+                                   {"LOWER": "fichier", "POS": "NOUN"}]
                  },
 
             "en":
@@ -59,7 +62,9 @@ patterns = {"fr":
                  SWITCH_TAB_PATTERN: [{"LOWER": "previous", "POS": "ADJ"}, {"LOWER": "tab", "POS": "NOUN"}],
                  PRINT_PATTERN: [{"LEMMA": "export", "POS": "VERB", "OP": "*"},
                                  {"LEMMA": "download", "POS": "VERB", "OP": "*"},
-                                 {"POS": "DET", "OP": "*"}, {"LOWER": "in"}, {"LOWER": "pdf"}]
+                                 {"POS": "DET", "OP": "*"}, {"LOWER": "in"}, {"LOWER": "pdf"}],
+                 SAVE_AS_PATTERN: [{"LEMMA": "download", "POS": "VERB"}, {"POS": "DET", "OP": "*"},
+                                   {"LOWER": "file", "POS": "NOUN"}]
                  }
             }
 """

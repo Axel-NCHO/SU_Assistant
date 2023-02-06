@@ -24,9 +24,9 @@ class Network:
 
     def get_vocab(self):
         if self.__language == "fr":
-            return spacy.load("fr_core_news_sm")
+            return spacy.load("fr_core_news_sm", disable=["parser"])
         if self.__language == "en":
-            return spacy.load("en_core_web_sm")
+            return spacy.load("en_core_web_sm", disable=["parser"])
         return spacy.blank("fr")
 
     def parse_instruction(self, instruction: str):
@@ -86,6 +86,8 @@ class Network:
                 self.__system_center.get_instruction(SystemInstruction(Task.SWITCH_TAB, None, None))
             if PRINT_PATTERN in patterns_matched_ids:
                 self.__system_center.get_instruction(SystemInstruction(Task.PRINT, None, None))
+            if SAVE_AS_PATTERN in patterns_matched_ids:
+                self.__system_center.get_instruction(SystemInstruction(Task.SAVE_AS, None, None))
 
         else:
             print("no")

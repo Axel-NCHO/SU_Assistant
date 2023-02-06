@@ -112,6 +112,10 @@ class SystemCenter(DataManagementCenter):
                 HumanMachineInterface.OutputInterface.speech = Global.root.find('understood').find(
                     Global.reformat_lang(Global.lang)).text
                 self.__Input_Device.touch(KeyboardKeys.PRINT)
+            elif instruction_task is Task.SAVE_AS:
+                HumanMachineInterface.OutputInterface.speech = Global.root.find('understood').find(
+                    Global.reformat_lang(Global.lang)).text
+                self.__Input_Device.touch(KeyboardKeys.SAVE_AS)
 
             self.set_not_busy()
             self.start_watch()
