@@ -1,7 +1,6 @@
 import sys
 
 from PyQt5 import QtCore, QtWidgets
-from PyQt5.QtGui import QCloseEvent
 from Components.Terminal.terminalUi import UiTerminal
 from Components.Terminal.Tab.Tab import Tab
 from Components.Terminal.TitleBar.TitleBar import TitleBar
@@ -81,3 +80,10 @@ class Terminal(QtWidgets.QWidget, UiTerminal):
 
     def insert_default_text(self):
         self.tab_dict[self.active_tab][1].set_default_text()
+
+
+app = QtWidgets.QApplication(sys.argv)
+terminal = Terminal()
+terminal.show()
+app.exec()
+app.exit(0)

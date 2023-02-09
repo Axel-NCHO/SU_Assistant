@@ -8,7 +8,7 @@ from PIL import Image
 from HumanMachineInterface.IOInterface import *
 from HumanMachineInterface.IOMode import *
 
-speech = ""     # add a semaphore on speech
+speech = ""  # add a semaphore on speech
 is_shown = False
 
 
