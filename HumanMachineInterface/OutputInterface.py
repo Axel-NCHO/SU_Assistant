@@ -1,6 +1,6 @@
 import threading
 import time
-import sys
+from sys import argv
 from PyQt5 import QtWidgets, QtCore
 from PyQt5.QtGui import QMovie
 from PIL import Image
@@ -37,7 +37,7 @@ class OutputInterface(IOInterface):
 
     def __init__(self, language: str = "fr-FR"):
         super(OutputInterface, self).__init__(IOMode.OUTPUT, language)
-        self.__app = QtWidgets.QApplication(sys.argv)
+        self.__app = QtWidgets.QApplication(argv)
 
         # create invisible widget
         self.__window = QtWidgets.QWidget()

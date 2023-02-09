@@ -4,11 +4,16 @@ from translate import Translator
 UI_TITLE = "SU - Interface"
 
 # Runtime variables defined at start in main.py
+user: str = "axel"
 tree: ET = ET
 root: ET.Element = ET.Element("")
 lang: str = ""
 fr_en_translator = Translator(from_lang="fr", to_lang="en")
 en_fr_translator = Translator(from_lang="en", to_lang="fr")
+
+terminal_prompt = ">  "
+terminal_prompt_color = (252,158,88)
+terminal_io_color = (170, 170, 170)
 
 
 def get_language():
@@ -19,9 +24,11 @@ def get_language():
 
 
 def get_username():
+    global user
     file = open("Store/UserName", 'r')
     user_name = file.readline()
     file.close()
+    user = user_name
     return user_name
 
 
