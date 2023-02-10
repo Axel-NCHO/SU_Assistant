@@ -89,16 +89,39 @@ class CustomQTextEdit(QtWidgets.QTextEdit):
         self.__move_cursor_to_end()
 
     def set_default_text(self):
-        self.setTextColor(QtGui.QColor(Global.terminal_prompt_color[0],
-                                       Global.terminal_prompt_color[1],
-                                       Global.terminal_prompt_color[2]))
-        self.append(f"terminal@alice/{Global.user} {Global.terminal_prompt}")
+        self.__set_prompt_color()
+        self.setText(f"terminal@alice/{Global.user} {Global.terminal_prompt}")
+        self.__set_default_io_color()
+
+    def set_error_text(self, text):
+        self.__set_error_color()
+        self.setText(f"{text}\n")
+        self.__set_default_io_color()
+
+    def set_warning_text(self, text):
+        self.__set_warning_color()
+        self.setText(f"{text}\n")
         self.__set_default_io_color()
 
     def __set_default_io_color(self):
         self.setTextColor(QtGui.QColor(Global.terminal_io_color[0],
                                        Global.terminal_io_color[1],
                                        Global.terminal_io_color[2]))
+
+    def __set_prompt_color(self):
+        self.setTextColor(QtGui.QColor(Global.terminal_prompt_color[0],
+                                       Global.terminal_prompt_color[1],
+                                       Global.terminal_prompt_color[2]))
+
+    def __set_error_color(self):
+        self.setTextColor(QtGui.QColor(Global.terminal_error_color[0],
+                                       Global.terminal_error_color[1],
+                                       Global.terminal_error_color[2]))
+
+    def __set_warning_color(self):
+        self.setTextColor(QtGui.QColor(Global.terminal_warning_color[0],
+                                       Global.terminal_warning_color[1],
+                                       Global.terminal_warning_color[2]))
 
     def __move_cursor_to_end(self):
         cursor = self.textCursor()
@@ -107,6 +130,31 @@ class CustomQTextEdit(QtWidgets.QTextEdit):
         self.__set_default_io_color()
 
     def __execute_command(self, command: str):
-        self.setText(f"command: {command}\nstatus: [OK]")
-        # self.setText("\n")
+        entry = command.split(Global.terminal_separator)
+        state = False
+        to_print = ""
+        if entry[0] == Global.terminal_system_key_word:
+            state, to_print = Global.system_center.process_terminal_command(entry[1:])
+        elif entry[0] == Global.terminal_media_keyword:
+            state, to_print = Global.media_center.process_terminal_command(entry[1:])
+        if entry[0] == Global.terminal_net__keyword:
+            state, to_print = Global.net_center.process_terminal_command(entry[1:])
+        if entry[0] == Global.terminal_memory_keyword:
+            state, to_print = Global.media_center.process_terminal_command(entry[1:])
+        else:
+            self.set_error_text(f"{entry[0]} is not valid command family")
+        if state:
+            if to_print != "":
+                if to_print.startswith(Global.terminal_warning_indicator):
+                    self.set_warning_text(to_print)
+                else:
+                    self.setText(to_print)
+            self.setText("status: [OK]")
+        else:
+            if to_print != "":
+                if to_print.startswith(Global.terminal_error_indicator):
+                    self.set_error_text(to_print)
+                else:
+                    self.setText(to_print)
+            self.setText("status: [FAILED]")
         self.set_default_text()

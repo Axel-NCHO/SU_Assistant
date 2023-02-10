@@ -38,6 +38,9 @@ out = OutputInterface(lang)
 print("Setting up processing centers")
 media_center = MediaCenter(inp, out)
 system_center = SystemCenter(inp)
+
+Global.media_center = media_center
+Global.system_center = system_center
 print("Setting up central network")
 net = Network(reformat_lang(lang), media_center, system_center)
 
