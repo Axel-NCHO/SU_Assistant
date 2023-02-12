@@ -15,6 +15,9 @@ class DataManagementCenter(ABC):
     def get_instruction(self, instruction: Instruction):
         self.await_instruction(instruction)
 
+    def get_external_instruction(self, instruction: str):
+        print(f"Received : \n{instruction}")
+
     def parse_instruction(self, instruction: Instruction):
         return instruction.Task, instruction.Entry, instruction.Output
 

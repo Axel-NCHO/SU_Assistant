@@ -1,4 +1,6 @@
 import threading
+import os
+import socket
 
 import Global
 from Global import get_username, get_language, reformat_lang, ET
@@ -7,6 +9,9 @@ import HumanMachineInterface.OutputInterface
 from Brain.Network import Network, MediaCenter, SystemCenter
 from HumanMachineInterface.InputInterface import InputInterface
 from HumanMachineInterface.OutputInterface import OutputInterface
+
+HOST = "127.0.0.1"  # localhost
+PORT = 65432
 
 
 def wait_for_request():
@@ -20,6 +25,24 @@ def wait_for_request():
 def great_user():
     HumanMachineInterface.OutputInterface.speech = root.find("greeting").find(reformat_lang(lang)).find(
         "start").text + " " + user_name + ", " + root.find("greeting").find(reformat_lang(lang)).find("end").text
+
+
+def set_server_for_external_components():
+    while True:
+        print("Opening new server")
+        with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+            s.bind((HOST, PORT))
+            s.listen()
+            conn, addr = s.accept()
+            with conn:
+                print(f"Connected by {addr}")
+                while True:
+                    data = conn.recv(1024)
+                    if not data:
+                        print("Closing server")
+                        break
+                    print("Received from client : ", data)
+                    conn.sendall(data)
 
 
 tree = ET.parse("HumanMachineInterface/StandardSpeech.xml")
@@ -44,7 +67,13 @@ Global.system_center = system_center
 print("Setting up central network")
 net = Network(reformat_lang(lang), media_center, system_center)
 
+print("Setting up server for external components")
+set_server_thread = threading.Thread(name="set_server_thread_@alice", target=set_server_for_external_components)
+set_server_thread.setDaemon(True)
+set_server_thread.start()
+
 # Great user
+print("We are all set")
 great_user()
 
 wait_for_request_thread = threading.Thread(target=wait_for_request)
