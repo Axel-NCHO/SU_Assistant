@@ -13,7 +13,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 
 class UiTerminal(object):
     def setup_ui(self, Form):
-        Form.setObjectName("Form")
+        Form.setObjectName("Terminal")
         Form.resize(600, 440)
         self.verticalLayout = QtWidgets.QVBoxLayout(Form)
         self.verticalLayout.setContentsMargins(0, 0, 0, 0)
@@ -32,4 +32,4 @@ class UiTerminal(object):
 
     def retranslate_ui(self, Form):
         _translate = QtCore.QCoreApplication.translate
-        Form.setWindowTitle(_translate("Form", "Form"))
+        Form.setWindowTitle(_translate("Terminal", "Terminal"))

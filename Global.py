@@ -12,7 +12,7 @@ fr_en_translator = Translator(from_lang="fr", to_lang="en")
 en_fr_translator = Translator(from_lang="en", to_lang="fr")
 
 terminal_prompt = ">  "
-terminal_prompt_color = (252,158,88)
+terminal_prompt_color = (252, 158, 88)
 terminal_io_color = (170, 170, 170)
 terminal_error_color = (168, 74, 50)
 terminal_warning_color = (168, 158, 50)
@@ -54,3 +54,5 @@ def reformat_lang(language: str) -> str:
         return "en"
     if language == "fr-FR":
         return "fr"
+
+

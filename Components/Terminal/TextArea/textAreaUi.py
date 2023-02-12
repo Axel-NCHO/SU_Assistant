@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import re
 
 # Form implementation generated from reading ui file '.\textArea.ui'
 #
@@ -58,6 +59,10 @@ class CustomQTextEdit(QtWidgets.QTextEdit):
 
     def __init__(self, parent=None):
         super(CustomQTextEdit, self).__init__(parent=parent)
+        self.__successive_entries = []
+        self.__displayed_entry_index = -1
+        self.__i_regex = re.compile(r"in:.+:in")
+        self.__o_regex = re.compile(r"out:.+:out")
 
     def keyPressEvent(self, e: QtGui.QKeyEvent) -> None:
         if e.key() == QtCore.Qt.Key_Backspace:
@@ -71,13 +76,23 @@ class CustomQTextEdit(QtWidgets.QTextEdit):
         elif e.key() == QtCore.Qt.Key_Return:
             content = self.toPlainText()
             command = content[content.rfind(Global.terminal_prompt) + len(Global.terminal_prompt):]
+            self.__successive_entries.append(command)
+            self.__displayed_entry_index = len(self.__successive_entries) - 1
             execute_thread = threading.Thread(name="execute_thread", target=self.__execute_command, args=[command])
             execute_thread.setDaemon(True)
             execute_thread.start()
+            # super().keyPressEvent(e)
 
         elif e.key() == QtCore.Qt.Key_Alt:
             self.clear()
             self.set_default_text()
+
+        elif e.key() == QtCore.Qt.Key_Up:
+            pass
+
+        elif e.key() == QtCore.Qt.Key_Down:
+            pass
+
         else:
             super().keyPressEvent(e)
 
@@ -85,6 +100,7 @@ class CustomQTextEdit(QtWidgets.QTextEdit):
         self.__move_cursor_to_end()
 
     def setText(self, text: str) -> None:
+        self.__move_cursor_to_end()
         super().append(text)
         self.__move_cursor_to_end()
 
@@ -130,31 +146,51 @@ class CustomQTextEdit(QtWidgets.QTextEdit):
         self.__set_default_io_color()
 
     def __execute_command(self, command: str):
-        entry = command.split(Global.terminal_separator)
-        state = False
-        to_print = ""
-        if entry[0] == Global.terminal_system_key_word:
-            state, to_print = Global.system_center.process_terminal_command(entry[1:])
-        elif entry[0] == Global.terminal_media_keyword:
-            state, to_print = Global.media_center.process_terminal_command(entry[1:])
-        if entry[0] == Global.terminal_net__keyword:
-            state, to_print = Global.net_center.process_terminal_command(entry[1:])
-        if entry[0] == Global.terminal_memory_keyword:
-            state, to_print = Global.media_center.process_terminal_command(entry[1:])
-        else:
-            self.set_error_text(f"{entry[0]} is not valid command family")
-        if state:
-            if to_print != "":
-                if to_print.startswith(Global.terminal_warning_indicator):
-                    self.set_warning_text(to_print)
-                else:
-                    self.setText(to_print)
-            self.setText("status: [OK]")
-        else:
-            if to_print != "":
-                if to_print.startswith(Global.terminal_error_indicator):
-                    self.set_error_text(to_print)
-                else:
-                    self.setText(to_print)
-            self.setText("status: [FAILED]")
+        entry = self.__parse_command_line(command)
+        if len(entry[0][0]) != 0:
+            state = False
+            to_print = ""
+            if entry[0][0] == Global.terminal_system_key_word:
+                pass
+                # state, to_print = Global.system_center.process_terminal_command(entry[1:])
+            elif entry[0][0] == Global.terminal_media_keyword:
+                pass
+                # state, to_print = Global.media_center.process_terminal_command(entry[1:])
+            elif entry[0][0] == Global.terminal_net__keyword:
+                pass
+                # state, to_print = Global.net_center.process_terminal_command(entry[1:])
+            elif entry[0][0] == Global.terminal_memory_keyword:
+                pass
+                # state, to_print = Global.media_center.process_terminal_command(entry[1:])
+            else:
+                self.set_error_text(f"{entry[0][0]} is not valid command family")
+            if state:
+                if to_print != "":
+                    if to_print.startswith(Global.terminal_warning_indicator):
+                        self.set_warning_text(to_print)
+                    else:
+                        self.setText(to_print)
+                self.setText("status: [OK]")
+            else:
+                if to_print != "":
+                    if to_print.startswith(Global.terminal_error_indicator):
+                        self.set_error_text(to_print)
+                    else:
+                        self.setText(to_print)
+                self.setText("status: [FAILED]")
         self.set_default_text()
+
+    def __parse_command_line(self, command):
+        inp = self.__i_regex.findall(command)
+        print("inp1: ", inp)
+        out = self.__o_regex.findall(command)
+        if len(inp) != 0:
+            inp = inp[0][3:len(inp[0])-3].split(" ")
+            print("inp2: ", inp)
+        if len(out) != 0:
+            out = out[0][4:len(out[0])-4].split(" ")
+        args = command.split(" ")[:2]
+        print("args: ", args)
+        print("inp: ", inp)
+        print("out: ", out)
+        return args, inp, out
