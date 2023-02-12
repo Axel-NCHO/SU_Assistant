@@ -1,6 +1,6 @@
 import sys
 
-from PyQt5 import QtCore, QtWidgets
+from PyQt5 import QtCore, QtWidgets, QtGui
 from Components.Terminal.terminalUi import UiTerminal
 from Components.Terminal.Tab.Tab import Tab
 from Components.Terminal.TitleBar.TitleBar import TitleBar
@@ -12,6 +12,7 @@ class Terminal(QtWidgets.QWidget, UiTerminal):
     def __init__(self):
         super(Terminal, self).__init__()
         self.setup_ui(self)
+        self.setWindowIcon(QtGui.QIcon("Store/Media/terminal_icon.png"))
         self.setWindowFlags(QtCore.Qt.FramelessWindowHint)
         self.setAttribute(QtCore.Qt.WA_TranslucentBackground)
 
@@ -83,6 +84,7 @@ class Terminal(QtWidgets.QWidget, UiTerminal):
 
 
 app = QtWidgets.QApplication(sys.argv)
+app.setWindowIcon(QtGui.QIcon("Store/Media/terminal_icon.png"))
 terminal = Terminal()
 terminal.show()
 app.exec()
