@@ -89,8 +89,6 @@ class Network:
                 self.__system_center.get_instruction(SystemInstruction(Task.PRINT, None, None))
             if SAVE_AS_PATTERN in patterns_matched_ids:
                 self.__system_center.get_instruction(SystemInstruction(Task.SAVE_AS, None, None))
-            if SHOW_TERMINAL_PATTERN in patterns_matched_ids:
-                self.__system_center.get_instruction(SystemInstruction(Task.SHOW_TERMINAL, None, None))
 
         else:
             print("no")

@@ -117,10 +117,6 @@ class SystemCenter(DataManagementCenter):
                 HumanMachineInterface.OutputInterface.speech = Global.root.find('understood').find(
                     Global.reformat_lang(Global.lang)).text
                 self.__Input_Device.touch(KeyboardKeys.SAVE_AS)
-            elif instruction_task is Task.SHOW_TERMINAL:
-                HumanMachineInterface.OutputInterface.speech = Global.root.find('understood').find(
-                    Global.reformat_lang(Global.lang)).text
-                subprocess.run(args=['python', 'Components/Terminal/Terminal.py'])
 
             self.set_not_busy()
             self.start_watch()
