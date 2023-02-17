@@ -1,5 +1,6 @@
 # ------------- MODULES -----------------
 # Modules for abstract class
+import os
 from abc import ABC, abstractmethod
 
 # Modules for senses
@@ -209,6 +210,16 @@ class IOInterface(ABC):
         except Exception as e:
             print(e)
             return None
+
+    def open_app(self, app: str):
+        """Works only on Windows.
+        Opens the specified app if it's installed on the host device"""
+
+        try:
+            check_mode(self.__mode.value, "Input")
+            os.system(f"start {app}")
+        except ModeException as e:
+            print(e.message)
 
 
     def speak(self, text: str):

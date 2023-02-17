@@ -3,12 +3,22 @@ import selectors
 import json
 import io
 import struct
+from Brain.InstructionArgument import Task
+from Brain.Instructions import *
+
+import Global
 
 request_search = {
-    # "morpheus": "Follow the white rabbit. \U0001f430",
-    "sys/time": "22h40. \U0001f430",
-    "ring": "In the caves beneath the Misty Mountains. \U0001f48d",
-    "\U0001f436": "\U0001f43e Playing ball! \U0001f3d0",
+    "media": [None, MediaInstruction, {
+        "take_image": Task.TAKE_IMAGE,
+        "take_screenshot": Task.TAKE_SCREENSHOT,
+        "record_video": Task.RECORD_VIDEO
+    }],
+    "sys": [None, SystemInstruction, {
+        "tell_time": Task.TELL_TIME,
+        "tell_time_specific": Task.TELL_TIME_SPECIFIC,
+        "tell_date": Task.TELL_DATE
+    }]
 }
 
 
@@ -23,6 +33,12 @@ class Message:
         self.jsonheader = None
         self.request = None
         self.response_created = False
+        request_search["media"][0] = Global.media_center
+        request_search["sys"][0] = Global.system_center
+        '''
+        self.__media_center = Global.media_center
+        self.__system_center = Global.system_center
+        '''
 
     def _set_selector_events_mask(self, mode):
         """Set selector to listen for events: mode is 'r', 'w', or 'rw'."""
@@ -92,8 +108,9 @@ class Message:
     def _create_response_json_content(self):    # <---------------------------------- create response
         action = self.request.get("action")    # <----------------- send request to center
         if action == "get":
-            query = self.request.get("value").split(":")[0].__str__()
-            answer = request_search.get(query) or f"No match for '{query}'."
+            query = self.request.get("value").split(":")
+            center, task, inp, out = self.interpret_query(query)
+            state, answer = self.send_query_to_center(center, task, inp, out)
             content = {"result": answer}
         else:
             content = {"result": f"Error: invalid action '{action}'."}
@@ -104,6 +121,26 @@ class Message:
             "content_encoding": content_encoding,
         }
         return response
+
+    def interpret_query(self, query):
+        interp_task = query[0].__str__().split("/")
+        center, task = interp_task[0], interp_task[1]
+        inp = query[1].__str__()
+        out = query[2].__str__()
+        return center, task, inp, out
+
+    def send_query_to_center(self, center, task, inp, out):
+        if center in request_search.keys():
+            if task in request_search[center][2].keys():
+                instruction_kind = request_search[center][1]
+                task_kind = request_search[center][2][task]
+                state, response = request_search[center][0].get_external_instruction(instruction_kind(
+                    task_kind, inp, out))
+                return state, response
+            return False, f"{task} is not recognised as a valid command for {center} center"
+
+        # Should not happen. The client should make sure the process. center is a valid one
+        return False, f"{center} is not recognised as a valid command family"
 
     def _create_response_binary_content(self):
         response = {

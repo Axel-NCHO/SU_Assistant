@@ -15,8 +15,8 @@ class DataManagementCenter(ABC):
     def get_instruction(self, instruction: Instruction):
         self.await_instruction(instruction)
 
-    def get_external_instruction(self, instruction: str):
-        print(f"Received : \n{instruction}")
+    def get_external_instruction(self, instruction: Instruction):
+        pass
 
     def parse_instruction(self, instruction: Instruction):
         return instruction.Task, instruction.Entry, instruction.Output
@@ -24,6 +24,18 @@ class DataManagementCenter(ABC):
     @abstractmethod
     def process_instructions(self):
         pass
+
+    def parse_entry(self, entry: str):
+        args = entry[1:len(entry)-1]
+        args = args.split("'")
+        pos = 0
+        while pos != len(args):
+            if not (args[pos].isalpha() or args[pos].isnumeric()):
+                del args[pos]
+                pos = 0
+            else:
+                pos += 1
+        return args
 
     def await_instruction(self, instruction: Instruction):
         self.__Queue.enqueue(instruction)
