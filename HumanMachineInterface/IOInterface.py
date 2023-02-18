@@ -71,7 +71,7 @@ class IOInterface(ABC):
         try:
             check_mode(self.__mode.value, "Input")
             with sr.Microphone() as speech_source:
-                self.__Recognizer.adjust_for_ambient_noise(speech_source, duration=0.3)
+                self.__Recognizer.adjust_for_ambient_noise(speech_source, duration=0.5)
 
                 print("J'écoute ...")
                 speech = self.__Recognizer.listen(speech_source)
