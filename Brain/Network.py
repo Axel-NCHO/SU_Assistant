@@ -2,6 +2,7 @@ import spacy
 from spacy.matcher import Matcher
 from playsound import playsound
 
+import Global
 import HumanMachineInterface.OutputInterface
 from Brain.ProcessingCenters import *
 from Brain.Instructions import MediaInstruction
@@ -10,13 +11,15 @@ from Brain.Patterns import *
 
 class Network:
 
-    def __init__(self, language: str, media_center: MediaCenter, system_center: SystemCenter):
+    def __init__(self, language: str, media_center: MediaCenter, system_center: SystemCenter,
+                 net_center: NetCenter):
         self.__language = language
         self.__nlp = self.get_vocab()
         self.__matcher = self.config_matcher()
 
         self.__media_center = media_center
         self.__system_center = system_center
+        self.__net_center = net_center
 
         self.__attempts_count: int = 0
         self.__MAX_ATTEMPTS_COUNT: int = 3
@@ -50,6 +53,11 @@ class Network:
                 self.__attempts_count = 0
                 self.__stand_by = False
                 print("out of stand-by")
+
+        lookup_keyword = Global.root.find("look_up").find("keyword").find(Global.reformat_lang(Global.lang)).text
+        if text.startswith(lookup_keyword):
+            self.__net_center.get_instruction(NetInstruction(Task.LOOK_UP, text[len(lookup_keyword)+1:], None))
+            return
 
         doc = self.__nlp(text)
 
@@ -89,6 +97,8 @@ class Network:
                 self.__system_center.get_instruction(SystemInstruction(Task.PRINT, None, None))
             if SAVE_AS_PATTERN in patterns_matched_ids:
                 self.__system_center.get_instruction(SystemInstruction(Task.SAVE_AS, None, None))
+            if OPEN_BROWSER_PATTERN in patterns_matched_ids:
+                self.__net_center.get_instruction(NetInstruction(Task.OPEN, None, None))
 
         else:
             print("no")

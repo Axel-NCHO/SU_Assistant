@@ -7,6 +7,7 @@ from Brain.InstructionArgument import Task
 from HumanMachineInterface.InputInterface import InputInterface, KeyboardKeys
 from HumanMachineInterface.OutputInterface import OutputInterface
 import Global
+import subprocess
 
 
 class Component(Enum):
@@ -254,6 +255,79 @@ class SystemCenter(DataManagementCenter):
             Global.reformat_lang(Global.lang)).text
         self.__Input_Device.touch(KeyboardKeys.SAVE_AS)
         # allowing further instructions will be done in the calling function 'process_instructions'
+
+    def get_external_instruction(self, instruction: Instruction):
+        state, response = self.process_instructions(external_instruction=instruction)
+        return state, response
+
+
+class NetCenter(DataManagementCenter):
+
+    def __init__(self):
+        super(NetCenter, self).__init__(NetInstruction)
+
+    def process_instructions(self, external_instruction=None):
+        if not self.is_busy():
+            self.set_busy()
+
+            # getting instruction details which depend on whether the instruction is from an external component
+            if external_instruction is None:
+                instruction = self.get_next_instruction()
+                instruction_task, entry, out = self.parse_instruction(instruction)
+            else:
+                instruction_task, entry, out = self.parse_instruction(external_instruction)
+                entry = self.parse_entry(entry)
+                print(entry)
+
+            # triggering the right execution for task
+            # return when the instruction is from an external component
+            if instruction_task is Task.LOOK_UP:
+                return self.handle_task_lookup(entry, out)
+            if instruction_task is Task.OPEN:
+                return self.handle_task_open_browser(out)
+
+            # allow this center to receive and process further instructions
+            # already done in executions that could return something for an external component
+            self.set_not_busy()
+            self.start_watch()
+
+    def handle_task_lookup(self, entry, out):
+        if out is not None:
+            if out == Component.TERMINAL.value:
+                search = " ".join(entry)
+                _ = subprocess.Popen(args=f"python InternalComponents/Browser/main.py \"{search}\"")
+                state_for_component = True
+                response_for_component = "See results in the browser"
+                self.set_not_busy()
+                return state_for_component, response_for_component
+        _ = subprocess.Popen(args=f"python InternalComponents/Browser/main.py \"{entry}\"")
+        HumanMachineInterface.OutputInterface.speech = Global.root.find("look_up").find(
+            Global.reformat_lang(Global.lang)).text
+
+        # allow this center to receive and process further instructions
+        self.set_not_busy()
+        self.start_watch()
+
+    def handle_task_open_browser(self, out):
+        if out is not None:
+            if out == Component.TERMINAL.value:
+                _ = subprocess.Popen(args=f"python InternalComponents/Browser/main.py")
+                state_for_component = True
+                response_for_component = "Browser opened successfully"
+                self.set_not_busy()
+                return state_for_component, response_for_component
+        _ = subprocess.Popen(args=f"python InternalComponents/Browser/main.py")
+        text_to_say = Global.root.find("understood").find(
+            Global.reformat_lang(Global.lang)).text + ". " + \
+                      Global.root.find("open").find("before").find(
+                          Global.reformat_lang(Global.lang)).text + " " + \
+                      Global.root.find("open").find("after").find("browser").find(
+                          Global.reformat_lang(Global.lang)).text
+        HumanMachineInterface.OutputInterface.speech = text_to_say
+
+        # allow this center to receive and process further instructions
+        self.set_not_busy()
+        self.start_watch()
 
     def get_external_instruction(self, instruction: Instruction):
         state, response = self.process_instructions(external_instruction=instruction)

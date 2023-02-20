@@ -8,7 +8,7 @@ import Global
 from Global import get_username, get_language, reformat_lang, ET
 
 import HumanMachineInterface.OutputInterface
-from Brain.Network import Network, MediaCenter, SystemCenter
+from Brain.Network import Network, MediaCenter, SystemCenter, NetCenter
 from HumanMachineInterface.InputInterface import InputInterface
 from HumanMachineInterface.OutputInterface import OutputInterface
 import libserver
@@ -103,11 +103,13 @@ out = OutputInterface(lang)
 print("Setting up processing centers")
 media_center = MediaCenter(inp, out)
 system_center = SystemCenter(inp)
+net_center = NetCenter()
 
 Global.media_center = media_center
 Global.system_center = system_center
+Global.net_center = net_center
 print("Setting up central network")
-net = Network(reformat_lang(lang), media_center, system_center)
+net = Network(reformat_lang(lang), media_center, system_center, net_center)
 
 print("Setting up server for external components")
 set_server_thread = threading.Thread(name="set_server_thread_@alice", target=set_server_for_external_components)

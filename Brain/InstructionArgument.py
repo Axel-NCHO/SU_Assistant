@@ -29,5 +29,8 @@ class Task(Enum):
     SWITCH_WINDOW = "switch window"             # Go to previous widows by doing alt+tab    [OK]
     SWITCH_TAB = "switch tab"                   # Go to previous tab by doing ctrl+tab      [OK]
 
+    # Net
+    LOOK_UP = "look up"
+
     # Converse
     GREET = "Greet"                             # Greet user

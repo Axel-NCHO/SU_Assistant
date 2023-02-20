@@ -79,4 +79,24 @@
         <fr>Nous sommes le</fr>
         <en>Today's date is</en>
     </tell_date>
+    <look_up>
+        <keyword>
+            <fr>cherche</fr>
+            <en>look up</en>
+        </keyword>
+        <fr>Voici les résultats obtenus sur le web</fr>
+        <en>Hera are the results gathered on the web</en>
+    </look_up>
+    <open>
+        <before>
+            <fr>J'ouvre</fr>
+            <en>Opening</en>
+        </before>
+        <after>
+            <browser>
+                <fr>le navigateur</fr>
+                <en>the browser</en>
+            </browser>
+        </after>
+    </open>
 </su_standard_speech>

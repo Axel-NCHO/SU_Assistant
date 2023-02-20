@@ -15,6 +15,7 @@ SWITCH_WINDOW_PATTERN = "SWITCH_WINDOW__PATTERN"
 SWITCH_TAB_PATTERN = "SWITCH_TAB_PATTERN"
 PRINT_PATTERN = "PRINT_PATTERN"
 SAVE_AS_PATTERN = "SAVE_AS_PATTERN"
+OPEN_BROWSER_PATTERN = "open_browser_pattern"
 
 patterns = {"fr":
                 {PHOTO_PATTERN: [{"LEMMA": "prendre", "POS": "VERB", "OP": "*"}, {"POS": "DET", "OP": "*"},
@@ -36,7 +37,8 @@ patterns = {"fr":
                                  {"LEMMA": "télécharger", "POS": "VERB", "OP": "*"},
                                  {"POS": "DET", "OP": "*"}, {"LOWER": "en"}, {"LOWER": "pdf"}],
                  SAVE_AS_PATTERN: [{"LEMMA": "télécharger", "POS": "VERB"}, {"POS": "DET", "OP": "*"},
-                                   {"LOWER": "fichier", "POS": "NOUN"}]
+                                   {"LOWER": "fichier", "POS": "NOUN"}],
+                 OPEN_BROWSER_PATTERN: [{"LEMMA": "ouvrir"}, {"POS": "DET"}, {"LOWER": "navigateur"}]
                  },
 
             "en":
@@ -58,7 +60,8 @@ patterns = {"fr":
                                  {"LEMMA": "download", "POS": "VERB", "OP": "*"},
                                  {"POS": "DET", "OP": "*"}, {"LOWER": "in"}, {"LOWER": "pdf"}],
                  SAVE_AS_PATTERN: [{"LEMMA": "download", "POS": "VERB"}, {"POS": "DET", "OP": "*"},
-                                   {"LOWER": "file", "POS": "NOUN"}]
+                                   {"LOWER": "file", "POS": "NOUN"}],
+                 OPEN_BROWSER_PATTERN: [{"LEMMA": "open"}, {"POS": "DET"}, {"LOWER": "browser"}]
                  }
             }
 """

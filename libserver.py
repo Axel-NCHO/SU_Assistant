@@ -18,6 +18,10 @@ request_search = {
         "tell_time": Task.TELL_TIME,
         "tell_time_specific": Task.TELL_TIME_SPECIFIC,
         "tell_date": Task.TELL_DATE
+    }],
+    "net": [None, NetInstruction, {
+        "look_up": Task.LOOK_UP,
+        "open_browser": Task.OPEN
     }]
 }
 
@@ -35,6 +39,7 @@ class Message:
         self.response_created = False
         request_search["media"][0] = Global.media_center
         request_search["sys"][0] = Global.system_center
+        request_search["net"][0] = Global.net_center
         '''
         self.__media_center = Global.media_center
         self.__system_center = Global.system_center
