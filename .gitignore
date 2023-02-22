@@ -5,4 +5,7 @@ Exceptions/__pycache__
 HumanMachineInterface/__pycache__
 InternalComponents/Browser/__pycache__
 venv
+Store/monitoring
+Store/monitoring/*
+monitoring.py
 SU - Shortcut.lnk

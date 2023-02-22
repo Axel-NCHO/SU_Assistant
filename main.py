@@ -1,5 +1,4 @@
 import threading
-import sys
 import selectors
 import traceback
 import socket
@@ -60,23 +59,6 @@ def set_server_for_external_components():
         print("Caught keyboard interrupt, exiting")
     finally:
         sel.close()
-    '''
-    while True:
-        print("Opening new server")
-        with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
-            s.bind((HOST, PORT))
-            s.listen()
-            conn, addr = s.accept()
-            with conn:
-                print(f"Connected by {addr}")
-                while True:
-                    data = conn.recv(1024)
-                    if not data:
-                        print("Closing server")
-                        break
-                    print("Received from client : ", data)
-                    conn.sendall(data)
-                    '''
 
 
 def accept_wrapper(sock):
