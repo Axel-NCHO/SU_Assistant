@@ -7,3 +7,4 @@ class KeyboardKeys(Enum):
     PRINT = "ctrl + p"
     SWITCH_WINDOW = "alt + tab"
     SWITCH_TAB = "ctrl + tab"
+    SPACE = "space"

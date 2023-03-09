@@ -157,6 +157,9 @@ class SystemCenter(DataManagementCenter):
             elif instruction_task is Task.SAVE_AS:
                 self.handle_task_save_as()
 
+            elif instruction_task is Task.PLAY_PAUSE:
+                self.handle_task_play_pause()
+
             # allow this center to receive and process further instructions
             # already done in executions that could return something for an external component
             self.set_not_busy()
@@ -254,6 +257,12 @@ class SystemCenter(DataManagementCenter):
         HumanMachineInterface.OutputInterface.speech = Global.root.find('understood').find(
             Global.reformat_lang(Global.lang)).text
         self.__Input_Device.touch(KeyboardKeys.SAVE_AS)
+        # allowing further instructions will be done in the calling function 'process_instructions'
+
+    def handle_task_play_pause(self):
+        HumanMachineInterface.OutputInterface.speech = Global.root.find('understood').find(
+            Global.reformat_lang(Global.lang)).text
+        self.__Input_Device.touch(KeyboardKeys.SPACE)
         # allowing further instructions will be done in the calling function 'process_instructions'
 
     def get_external_instruction(self, instruction: Instruction):

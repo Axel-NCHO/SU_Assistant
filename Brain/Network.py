@@ -99,6 +99,8 @@ class Network:
                 self.__system_center.get_instruction(SystemInstruction(Task.SAVE_AS, None, None))
             if OPEN_BROWSER_PATTERN in patterns_matched_ids:
                 self.__net_center.get_instruction(NetInstruction(Task.OPEN, None, None))
+            if PLAY_PAUSE_PATTERN in patterns_matched_ids:
+                self.__system_center.get_instruction(SystemInstruction(Task.PLAY_PAUSE, None, None))
 
         else:
             print("no")

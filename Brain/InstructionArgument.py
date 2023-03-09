@@ -28,6 +28,7 @@ class Task(Enum):
     PRINT = "print"                             # Print a file to pdf by doing ctrl+p       [OK]
     SWITCH_WINDOW = "switch window"             # Go to previous widows by doing alt+tab    [OK]
     SWITCH_TAB = "switch tab"                   # Go to previous tab by doing ctrl+tab      [OK]
+    PLAY_PAUSE = "play_pause"
 
     # Net
     LOOK_UP = "look up"
