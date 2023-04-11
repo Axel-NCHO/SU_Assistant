@@ -12,7 +12,6 @@ import keyboard
 import cv2 as cv
 from pyautogui import screenshot
 
-import HumanMachineInterface.OutputInterface
 # In-project modules
 from Exceptions.IOException import ModeException, NullReferenceException
 from HumanMachineInterface.IOMode import IOMode
@@ -107,7 +106,6 @@ class IOInterface(ABC):
 
             if not self.__Camera.isOpened():
                 print("Impossible d'ouvrir la caméra")
-                HumanMachineInterface.OutputInterface.speech = "Impossible d'ouvrir la caméra."
                 # exit(1)
             self.camera_in_use = True
         except Exception as e:
@@ -127,9 +125,6 @@ class IOInterface(ABC):
             exit_state, image = self.__Camera.read()
             if exit_state:
                 fileName = FileManager.save_image(image)
-                text_to_say_after = Global.root.find("take_photo").find("after").find(
-                    Global.reformat_lang(Global.lang)).text
-                HumanMachineInterface.OutputInterface.speech = text_to_say_after
                 show_image(image)
                 self.close_camera()
                 return fileName
@@ -176,9 +171,6 @@ class IOInterface(ABC):
                     cv.imshow('frame', frame)
                     if cv.waitKey(1) == ord('q'):
                         break
-            text_to_say_after = Global.root.find("record_video").find("after").find(
-                Global.reformat_lang(Global.lang)).text
-            HumanMachineInterface.OutputInterface.speech = text_to_say_after
             self.close_camera()
             FileManager.reset_video_saver()
             cv.destroyAllWindows()
@@ -198,9 +190,6 @@ class IOInterface(ABC):
             check_mode(self.__mode.value, "Input")
             screensht = screenshot()
             image = FileManager.convert_img_to_cv_format(screensht)
-            text_to_say_after = Global.root.find("take_screenshot").find("after").find(
-                Global.reformat_lang(Global.lang)).text
-            HumanMachineInterface.OutputInterface.speech = text_to_say_after
             show_image(image, title="screenshot")
             return FileManager.save_image(image)
 
@@ -246,7 +235,3 @@ class IOInterface(ABC):
             print(e.message)
         except Exception as e:
             print(e)
-
-
-
-

@@ -3,9 +3,10 @@ from spacy.matcher import Matcher
 from playsound import playsound
 
 import Global
-import HumanMachineInterface.OutputInterface
-from Brain.ProcessingCenters import *
-from Brain.Instructions import MediaInstruction
+from HumanMachineInterface.OutputInterface import OutputInterface
+from Brain.ProcessingCenters import MediaCenter, SystemCenter, NetCenter
+from Brain.Instructions import MediaInstruction, SystemInstruction, NetInstruction
+from Brain.InstructionArgument import Task
 from Brain.Patterns import *
 
 
@@ -48,7 +49,7 @@ class Network:
 
         text = instruction
         if text == self.__NAME:
-            HumanMachineInterface.OutputInterface.speech = Global.root.find("pay_attention").find(self.__language).text
+            OutputInterface.get_instance().set_speech(Global.root.find("pay_attention").find(self.__language).text)
             if self.__stand_by:
                 self.__attempts_count = 0
                 self.__stand_by = False

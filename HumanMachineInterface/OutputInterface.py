@@ -1,15 +1,12 @@
-import threading
-import time
+from threading import Thread
+from time import sleep
 from sys import argv
 from PyQt5 import QtWidgets, QtCore
 from PyQt5.QtGui import QMovie
 from PIL import Image
 
-from HumanMachineInterface.IOInterface import *
-from HumanMachineInterface.IOMode import *
-
-speech = ""  # add a semaphore on speech
-is_shown = False
+from HumanMachineInterface.IOInterface import IOInterface
+from HumanMachineInterface.IOMode import IOMode
 
 
 def smooth_gif_resize(gif, frameWidth, frameHeight):
@@ -48,6 +45,8 @@ class OutputInterface(IOInterface):
 
     def __init__(self, language: str = "fr-FR"):
         super(OutputInterface, self).__init__(IOMode.OUTPUT, language)
+        self.__speech = ""
+        self.__is_shown = False
         self.__app = QtWidgets.QApplication(argv)
 
         # create invisible widget
@@ -98,6 +97,12 @@ class OutputInterface(IOInterface):
         self.__y = 2 * self.__ag.height() - self.__sg.height() - self.__widget.height()
         self.__window.move(self.__x, self.__y)
 
+    def set_speech(self, speech: str):
+        self.__speech = speech
+
+    def is_shown(self):
+        return self.__is_shown
+
     def speak(self, text: str):
         """
         Speak with installed voices \n
@@ -113,26 +118,25 @@ class OutputInterface(IOInterface):
         super(OutputInterface, self).play_video(videoPath)
 
     def show(self):
-        global is_shown
         # Watchman to take into account speech inquiries from other modules
-        wait_for_speech_thread = threading.Thread(target=self.wait_for_speech)
+        wait_for_speech_thread = Thread(target=self.wait_for_speech)
         wait_for_speech_thread.setDaemon(True)
         wait_for_speech_thread.start()
-        is_shown = True
+        self.__is_shown = True
 
         self.__window.show()
         self.__app.exec()
 
     def wait_for_speech(self):
-        global speech
         while True:
-            if speech != "":
-                speak_thread = threading.Thread(target=self.speak, args=[speech])
+            if self.__speech != "":
+                speak_thread = Thread(target=self.speak, args=[self.__speech])
                 speak_thread.setDaemon(True)
                 speak_thread.start()
-            if speech != "":
-                speech = ""
-            time.sleep(.5)
+            if self.__speech != "":
+                self.__speech = ""
+            sleep(.5)
 
     def __close(self):
+        self.__is_shown = False
         self.__app.exit(0)

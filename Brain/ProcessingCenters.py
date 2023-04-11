@@ -1,13 +1,13 @@
 from enum import Enum
-import HumanMachineInterface.OutputInterface
 from Brain.DataManagementCenter import DataManagementCenter
-from Brain.Instructions import *
-from Brain.System import *
+from Brain.Instructions import Instruction, MediaInstruction, NetInstruction, SystemInstruction
+from Brain.System import System
 from Brain.InstructionArgument import Task
-from HumanMachineInterface.InputInterface import InputInterface, KeyboardKeys
+from HumanMachineInterface.InputInterface import InputInterface
+from HumanMachineInterface.KeyboardKeys import KeyboardKeys
 from HumanMachineInterface.OutputInterface import OutputInterface
 import Global
-import subprocess
+from subprocess import Popen
 
 
 class Component(Enum):
@@ -66,7 +66,7 @@ class MediaCenter(DataManagementCenter):
     def handle_task_take_image(self, out):
         text_to_say_before = Global.root.find("take_photo").find("before").find(
             Global.reformat_lang(Global.lang)).text
-        HumanMachineInterface.OutputInterface.speech = text_to_say_before
+        OutputInterface.get_instance().set_speech(text_to_say_before)
         _ = self.__Input_Device.capture_image()
         if out is not None:
             if out == Component.TERMINAL.value:
@@ -82,7 +82,7 @@ class MediaCenter(DataManagementCenter):
     def handle_task_take_screenshot(self, out):
         text_to_say_before = Global.root.find("take_screenshot").find("before").find(
             Global.reformat_lang(Global.lang)).text
-        HumanMachineInterface.OutputInterface.speech = text_to_say_before
+        OutputInterface.get_instance().set_speech(text_to_say_before)
         _ = self.__Input_Device.capture_screenshot()
         if out is not None:
             if out == Component.TERMINAL.value:
@@ -98,7 +98,7 @@ class MediaCenter(DataManagementCenter):
     def handle_task_record_video(self, out):
         text_to_say_before = Global.root.find("record_video").find("before").find(
             Global.reformat_lang(Global.lang)).text
-        HumanMachineInterface.OutputInterface.speech = text_to_say_before
+        OutputInterface.get_instance().set_speech(text_to_say_before)
         _ = self.__Input_Device.capture_video()
         if out is not None:
             if out == Component.TERMINAL.value:
@@ -207,7 +207,7 @@ class SystemCenter(DataManagementCenter):
         f"{Global.root.find('tell_time').find('between').find(Global.reformat_lang(Global.lang)).text} " + \
         f"{time[1]} " + \
         f"{Global.root.find('tell_time').find('after').find('minutes').find(Global.reformat_lang(Global.lang)).text}"
-        HumanMachineInterface.OutputInterface.speech = text_to_say_after
+        OutputInterface.get_instance().set_speech(text_to_say_after)
 
         # allow this center to receive and process further instructions
         self.set_not_busy()
@@ -232,7 +232,7 @@ class SystemCenter(DataManagementCenter):
         f"{Global.root.find('tell_time').find('after').find('minutes').find(Global.reformat_lang(Global.lang)).text}"+\
         f"{entry[0]} {entry[1]}"  # entry[0] is the preposition used and entry[1] is
         # the name of the region in the original language
-        HumanMachineInterface.OutputInterface.speech = text_to_say_after
+        OutputInterface.get_instance().set_speech(text_to_say_after)
 
         # allow this center to receive and process further instructions
         self.set_not_busy()
@@ -251,39 +251,39 @@ class SystemCenter(DataManagementCenter):
                 response_for_component = text_to_say_after
                 self.set_not_busy()
                 return state_for_component, response_for_component
-        HumanMachineInterface.OutputInterface.speech = text_to_say_after
+        OutputInterface.get_instance().set_speech(text_to_say_after)
 
         # allow this center to receive and process further instructions
         self.set_not_busy()
         self.start_watch()
 
     def handle_task_switch_window(self):
-        HumanMachineInterface.OutputInterface.speech = Global.root.find('understood').find(
-            Global.reformat_lang(Global.lang)).text
+        OutputInterface.get_instance().set_speech(Global.root.find('understood').find(
+            Global.reformat_lang(Global.lang)).text)
         self.__Input_Device.touch(KeyboardKeys.SWITCH_WINDOW)
         # allowing further instructions will be done in the calling function 'process_instructions'
 
     def handle_task_switch_tab(self):
-        HumanMachineInterface.OutputInterface.speech = Global.root.find('understood').find(
-            Global.reformat_lang(Global.lang)).text
+        OutputInterface.get_instance().set_speech(Global.root.find('understood').find(
+            Global.reformat_lang(Global.lang)).text)
         self.__Input_Device.touch(KeyboardKeys.SWITCH_TAB)
         # allowing further instructions will be done in the calling function 'process_instructions'
 
     def handle_task_print(self):
-        HumanMachineInterface.OutputInterface.speech = Global.root.find('understood').find(
-            Global.reformat_lang(Global.lang)).text
+        OutputInterface.get_instance().set_speech(Global.root.find('understood').find(
+            Global.reformat_lang(Global.lang)).text)
         self.__Input_Device.touch(KeyboardKeys.PRINT)
         # allowing further instructions will be done in the calling function 'process_instructions'
 
     def handle_task_save_as(self):
-        HumanMachineInterface.OutputInterface.speech = Global.root.find('understood').find(
-            Global.reformat_lang(Global.lang)).text
+        OutputInterface.get_instance().set_speech(Global.root.find('understood').find(
+            Global.reformat_lang(Global.lang)).text)
         self.__Input_Device.touch(KeyboardKeys.SAVE_AS)
         # allowing further instructions will be done in the calling function 'process_instructions'
 
     def handle_task_play_pause(self):
-        HumanMachineInterface.OutputInterface.speech = Global.root.find('understood').find(
-            Global.reformat_lang(Global.lang)).text
+        OutputInterface.get_instance().set_speech(Global.root.find('understood').find(
+            Global.reformat_lang(Global.lang)).text)
         self.__Input_Device.touch(KeyboardKeys.SPACE)
         # allowing further instructions will be done in the calling function 'process_instructions'
 
@@ -333,14 +333,14 @@ class NetCenter(DataManagementCenter):
         if out is not None:
             if out == Component.TERMINAL.value:
                 search = " ".join(entry)
-                _ = subprocess.Popen(args=f"python InternalComponents/Browser/main.py \"{search}\"")
+                _ = Popen(args=f"python InternalComponents/Browser/main.py \"{search}\"")
                 state_for_component = True
                 response_for_component = "See results in the browser"
                 self.set_not_busy()
                 return state_for_component, response_for_component
-        _ = subprocess.Popen(args=f"python InternalComponents/Browser/main.py \"{entry}\"")
-        HumanMachineInterface.OutputInterface.speech = Global.root.find("look_up").find(
-            Global.reformat_lang(Global.lang)).text
+        _ = Popen(args=f"python InternalComponents/Browser/main.py \"{entry}\"")
+        OutputInterface.get_instance().set_speech(Global.root.find("look_up").find(
+            Global.reformat_lang(Global.lang)).text)
 
         # allow this center to receive and process further instructions
         self.set_not_busy()
@@ -349,19 +349,19 @@ class NetCenter(DataManagementCenter):
     def handle_task_open_browser(self, out):
         if out is not None:
             if out == Component.TERMINAL.value:
-                _ = subprocess.Popen(args=f"python InternalComponents/Browser/main.py")
+                _ = Popen(args=f"python InternalComponents/Browser/main.py")
                 state_for_component = True
                 response_for_component = "Browser opened successfully"
                 self.set_not_busy()
                 return state_for_component, response_for_component
-        _ = subprocess.Popen(args=f"python InternalComponents/Browser/main.py")
+        _ = Popen(args=f"python InternalComponents/Browser/main.py")
         text_to_say = Global.root.find("understood").find(
             Global.reformat_lang(Global.lang)).text + ". " + \
             Global.root.find("open").find("before").find(
             Global.reformat_lang(Global.lang)).text + " " + \
             Global.root.find("open").find("after").find("browser").find(
             Global.reformat_lang(Global.lang)).text
-        HumanMachineInterface.OutputInterface.speech = text_to_say
+        OutputInterface.get_instance().set_speech(text_to_say)
 
         # allow this center to receive and process further instructions
         self.set_not_busy()

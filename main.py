@@ -1,20 +1,19 @@
-import threading
-import selectors
-import traceback
-import socket
+from threading import Thread
+from selectors import DefaultSelector, EVENT_READ
+from traceback import format_exc
+from socket import socket, AF_INET, SOCK_STREAM, SOL_SOCKET, SO_REUSEADDR
 
 import Global
 from Global import get_username, get_language, reformat_lang, ET
 
-import HumanMachineInterface.OutputInterface
 from Brain.Network import Network, MediaCenter, SystemCenter, NetCenter
 from HumanMachineInterface.InputInterface import InputInterface
 from HumanMachineInterface.OutputInterface import OutputInterface
-import libserver
+from libserver import Message
 
 HOST = "127.0.0.1"  # localhost
 PORT = 65432
-sel = selectors.DefaultSelector()
+sel = DefaultSelector()
 
 
 def wait_for_request():
@@ -26,19 +25,19 @@ def wait_for_request():
 
 
 def great_user():
-    HumanMachineInterface.OutputInterface.speech = root.find("greeting").find(reformat_lang(lang)).find(
-        "start").text + " " + user_name + ", " + root.find("greeting").find(reformat_lang(lang)).find("end").text
+    out.set_speech(root.find("greeting").find(reformat_lang(lang)).find(
+        "start").text + " " + user_name + ", " + root.find("greeting").find(reformat_lang(lang)).find("end").text)
 
 
 def set_server_for_external_components():
-    lsock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    lsock = socket(AF_INET, SOCK_STREAM)
     # Avoid bind() exception: OSError: [Errno 48] Address already in use
-    lsock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+    lsock.setsockopt(SOL_SOCKET, SO_REUSEADDR, 1)
     lsock.bind((HOST, PORT))
     lsock.listen()
     print(f"Listening on {(HOST, PORT)}")
     lsock.setblocking(False)
-    sel.register(lsock, selectors.EVENT_READ, data=None)
+    sel.register(lsock, EVENT_READ, data=None)
     try:
         while True:
             events = sel.select(timeout=None)
@@ -52,7 +51,7 @@ def set_server_for_external_components():
                     except Exception:
                         print(
                             f"Main: Error: Exception for {message.addr}:\n"
-                            f"{traceback.format_exc()}"
+                            f"{format_exc()}"
                         )
                         message.close()
     except KeyboardInterrupt:
@@ -65,8 +64,8 @@ def accept_wrapper(sock):
     conn, addr = sock.accept()
     print(f"Accepted connection from {addr}")
     conn.setblocking(False)
-    message = libserver.Message(sel, conn, addr)
-    sel.register(conn, selectors.EVENT_READ, data=message)
+    message = Message(sel, conn, addr)
+    sel.register(conn, EVENT_READ, data=message)
 
 
 tree = ET.parse("HumanMachineInterface/StandardSpeech.xml")
@@ -91,7 +90,7 @@ print("Setting up central network")
 net = Network.get_instance(reformat_lang(lang), media_center, system_center, net_center)
 
 print("Setting up server for external components")
-set_server_thread = threading.Thread(name="set_server_thread_@alice", target=set_server_for_external_components)
+set_server_thread = Thread(name="set_server_thread_@alice", target=set_server_for_external_components)
 set_server_thread.setDaemon(True)
 set_server_thread.start()
 
@@ -99,7 +98,7 @@ set_server_thread.start()
 print("We are all set")
 great_user()
 
-wait_for_request_thread = threading.Thread(target=wait_for_request)
+wait_for_request_thread = Thread(target=wait_for_request)
 wait_for_request_thread.start()
 
 out.show()

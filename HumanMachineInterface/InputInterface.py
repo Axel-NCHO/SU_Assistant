@@ -1,6 +1,6 @@
 # In-project modules
-from HumanMachineInterface.IOInterface import *
-from HumanMachineInterface.IOMode import *
+from HumanMachineInterface.IOInterface import IOInterface
+from HumanMachineInterface.IOMode import IOMode
 from HumanMachineInterface.KeyboardKeys import KeyboardKeys
 
 
