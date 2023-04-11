@@ -76,7 +76,7 @@ Global.root = root
 
 user_name = get_username()
 print("Setting up language")
-lang = get_language()  # reformat if not called by In/Out interface
+lang = get_language()  # reformat if isn't called by In/Out interface
 Global.lang = lang
 print("Setting up input interface")
 inp = InputInterface.get_instance(lang)
@@ -107,6 +107,6 @@ out.show()
 # Executed when out is closed
 # As it is the main process, all the other threads will exit too as they are daemons.
 # However, the process that listens for new requests is not a daemon. It must be explicitly stopped.
-# If all threads are not stopped, the program will continue to run in background even if the main
+# If all threads are not stopped, the program will continue to run in the background even if the main
 # process (the Tk window) has exited.
 inp.stop_listening()

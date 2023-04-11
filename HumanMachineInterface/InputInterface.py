@@ -54,7 +54,7 @@ class InputInterface(IOInterface):
 
     def capture_screenshot(self) -> str:
         """
-        Take a screenshot of the whole screen \n
+        Take a screenshot of the screen \n
         :return: The path to the file
         """
         return super(InputInterface, self).capture_screenshot()

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 
-<!-- This file contains the standard speech said by SU for each service provided -->
+<!-- This file contains the standard speech said by SU for each service provided. -->
 
 <su_standard_speech xmlns="">
     <pay_attention>
@@ -42,12 +42,12 @@
         </before>
         <after>
             <fr>ça y est ! Vous pouvez l'enregistrer en faisant control s</fr>
-            <en>I'm done ! You can save it by doing control s</en>
+            <en>I'm done! You can save it by doing control s</en>
         </after>
     </take_screenshot>
     <record_video>
         <before>
-            <fr>Ok, je patientez quelques secondes. Appuyez la touche q pour terminer.</fr>
+            <fr>Ok, je patiente quelques secondes. Appuyez la touche q pour terminer.</fr>
             <en>I'm filming, touch q to finish.</en>
         </before>
         <after>

@@ -32,7 +32,7 @@ def smooth_gif_resize(gif, frameWidth, frameHeight):
 class OutputInterface(IOInterface):
     """
     Output Interface: \n
-    Performs all machine to human operations: output actions
+    Performs all machine-to-human operations: output actions
     """
 
     __instance = None
@@ -43,7 +43,7 @@ class OutputInterface(IOInterface):
             if lang:
                 OutputInterface.__instance = OutputInterface(lang)
             else:
-                raise RuntimeError("Missing positional argments: language")
+                raise RuntimeError("Missing positional arguments: language")
         return OutputInterface.__instance
 
     def __init__(self, language: str = "fr-FR"):
@@ -100,7 +100,7 @@ class OutputInterface(IOInterface):
 
     def speak(self, text: str):
         """
-        Speak information(s) with installed voices \n
+        Speak with installed voices \n
         :param text: Information to be spoken
         """
         super(OutputInterface, self).speak(text)
@@ -108,7 +108,7 @@ class OutputInterface(IOInterface):
     def play_video(self, videoPath: str):
         """
         Play a video file \n
-        :param videoPath: Path to th video file
+        :param videoPath: Path to the video file.
         """
         super(OutputInterface, self).play_video(videoPath)
 
@@ -134,5 +134,5 @@ class OutputInterface(IOInterface):
                 speech = ""
             time.sleep(.5)
 
-    def __close(self, event):
+    def __close(self):
         self.__app.exit(0)

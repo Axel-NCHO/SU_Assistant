@@ -72,7 +72,7 @@ class Network:
 
         doc = self.__nlp(text)
 
-        # Find instruction group
+        # Find an instruction group
         matches = self.__matcher(doc)
 
         if len(matches) != 0:

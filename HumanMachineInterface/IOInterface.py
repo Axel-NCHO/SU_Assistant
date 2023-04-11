@@ -213,7 +213,7 @@ class IOInterface(ABC):
 
     def open_app(self, app: str):
         """Works only on Windows.
-        Opens the specified app if it's installed on the host device"""
+        Opens the specified app if it is installed on the host device"""
 
         try:
             check_mode(self.__mode.value, "Input")

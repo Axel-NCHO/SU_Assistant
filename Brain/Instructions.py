@@ -13,7 +13,8 @@ class Instruction(ABC):
     def __eq__(self, other):
         if other is None:
             return False
-        return self.Group.value == other.Group.value and self.Task.value == other.Task.value and self.Entry == other.Entry and self.Output == other.Output
+        return self.Group.value == other.Group.value and self.Task.value == other.Task.value and self.Entry == \
+            other.Entry and self.Output == other.Output
 
 
 class MediaInstruction(Instruction):

@@ -1,7 +1,7 @@
 class Queue:
 
-    def __init__(self, elementsType: type, args: list = None):
-        self.__Elements_Type = elementsType
+    def __init__(self, elementType: type, args: list = None):
+        self.__Elements_Type = elementType
         if args is None:
             args = []
         if len(args) != 0:

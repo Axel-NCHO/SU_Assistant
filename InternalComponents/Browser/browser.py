@@ -118,7 +118,7 @@ class MainWindow(QMainWindow):
         # if url is blank
         if qurl is None:
             # creating a Google url
-            qurl = QUrl('http://www.google.com')
+            qurl = QUrl('https:///www.google.com')
 
         # creating a QWebEngineView object
         browser = QWebEngineView()
