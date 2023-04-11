@@ -35,6 +35,17 @@ class OutputInterface(IOInterface):
     Performs all machine to human operations: output actions
     """
 
+    __instance = None
+
+    @staticmethod
+    def get_instance(lang=None):
+        if not OutputInterface.__instance:
+            if lang:
+                OutputInterface.__instance = OutputInterface(lang)
+            else:
+                raise RuntimeError("Missing positional argments: language")
+        return OutputInterface.__instance
+
     def __init__(self, language: str = "fr-FR"):
         super(OutputInterface, self).__init__(IOMode.OUTPUT, language)
         self.__app = QtWidgets.QApplication(argv)

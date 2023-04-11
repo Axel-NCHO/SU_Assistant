@@ -10,6 +10,17 @@ from Brain.Patterns import *
 
 
 class Network:
+    __instance = None
+
+    @staticmethod
+    def get_instance(language=None, media_center=None, system_center=None,
+                     net_center=None):
+        if not Network.__instance:
+            if language and media_center and system_center and net_center:
+                Network.__instance = Network(language, media_center, system_center, net_center)
+            else:
+                raise RuntimeError("Missing positional arguments: language, media_center, system_center, net_center")
+        return Network.__instance
 
     def __init__(self, language: str, media_center: MediaCenter, system_center: SystemCenter,
                  net_center: NetCenter):
@@ -56,7 +67,7 @@ class Network:
 
         lookup_keyword = Global.root.find("look_up").find("keyword").find(Global.reformat_lang(Global.lang)).text
         if text.startswith(lookup_keyword):
-            self.__net_center.get_instruction(NetInstruction(Task.LOOK_UP, text[len(lookup_keyword)+1:], None))
+            self.__net_center.get_instruction(NetInstruction(Task.LOOK_UP, text[len(lookup_keyword) + 1:], None))
             return
 
         doc = self.__nlp(text)
@@ -111,7 +122,7 @@ class Network:
                 print("stand by ...")
 
     def __trim_name(self, text: str):
-        return text[len(self.__NAME)+1:]
+        return text[len(self.__NAME) + 1:]
 
     def config_matcher(self):
         matcher = Matcher(self.__nlp.vocab)
