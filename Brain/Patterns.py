@@ -1,8 +1,8 @@
-# To add a new language, just add a new (key, value) item to the dictionary "patterns"
+# To add a new language, just add a new (key, value) item to the dictionary “patterns”
 # where :
-#       -> key is an abbreviation of the language name
-#       -> value is a dictionary containing the pattern to be matched for each service provided
-#          by SU
+#       → key is an abbreviation of the language name
+#       → value is a dictionary containing the pattern to be matched for each service provided
+#          by SU.
 
 # patterns names
 PHOTO_PATTERN = "PHOTO_PATTERN"

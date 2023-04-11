@@ -62,7 +62,7 @@ def set_server_for_external_components():
 
 
 def accept_wrapper(sock):
-    conn, addr = sock.accept()  # Should be ready to read
+    conn, addr = sock.accept()
     print(f"Accepted connection from {addr}")
     conn.setblocking(False)
     message = libserver.Message(sel, conn, addr)
@@ -76,22 +76,19 @@ Global.root = root
 
 user_name = get_username()
 print("Setting up language")
-lang = get_language()  # must be reformatted if not called by In/Out interface
+lang = get_language()  # reformat if not called by In/Out interface
 Global.lang = lang
 print("Setting up input interface")
-inp = InputInterface(lang)
+inp = InputInterface.get_instance(lang)
 print("Setting up output interface")
-out = OutputInterface(lang)
+out = OutputInterface.get_instance(lang)
 print("Setting up processing centers")
-media_center = MediaCenter(inp, out)
-system_center = SystemCenter(inp)
-net_center = NetCenter()
+media_center = MediaCenter.get_instance(inp, out)
+system_center = SystemCenter.get_instance(inp)
+net_center = NetCenter.get_instance()
 
-Global.media_center = media_center
-Global.system_center = system_center
-Global.net_center = net_center
 print("Setting up central network")
-net = Network(reformat_lang(lang), media_center, system_center, net_center)
+net = Network.get_instance(reformat_lang(lang), media_center, system_center, net_center)
 
 print("Setting up server for external components")
 set_server_thread = threading.Thread(name="set_server_thread_@alice", target=set_server_for_external_components)
@@ -108,8 +105,8 @@ wait_for_request_thread.start()
 out.show()
 
 # Executed when out is closed
-# As it's the main process, all the other threads will exit too as they are daemons.
-# But the process that listens for new requests is not a daemon. It must be explicitly stopped.
+# As it is the main process, all the other threads will exit too as they are daemons.
+# However, the process that listens for new requests is not a daemon. It must be explicitly stopped.
 # If all threads are not stopped, the program will continue to run in background even if the main
 # process (the Tk window) has exited.
 inp.stop_listening()

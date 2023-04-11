@@ -10,6 +10,17 @@ class InputInterface(IOInterface):
     Performs all human to machine actions: input_source actions
     """
 
+    __instance = None
+
+    @staticmethod
+    def get_instance(lang=None):
+        if not InputInterface.__instance:
+            if lang:
+                InputInterface.__instance = InputInterface(lang)
+            else:
+                raise RuntimeError("Missing positional argments: language")
+        return InputInterface.__instance
+
     def __init__(self, language: str ="fr-FR"):
         super(InputInterface, self).__init__(IOMode.INPUT, language)
         self.__is_listening = True

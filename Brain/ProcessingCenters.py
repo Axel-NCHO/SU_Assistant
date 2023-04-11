@@ -15,6 +15,16 @@ class Component(Enum):
 
 
 class MediaCenter(DataManagementCenter):
+    __instance = None
+
+    @staticmethod
+    def get_instance(input_device=None, output_device=None):
+        if not MediaCenter.__instance:
+            if input_device and output_device:
+                MediaCenter.__instance = MediaCenter(input_device, output_device)
+            else:
+                raise RuntimeError("Missing positional arguments: input_device and output_device")
+        return MediaCenter.__instance
 
     def __init__(self, input_device: InputInterface, output_device: OutputInterface):
         super(MediaCenter, self).__init__(MediaInstruction)
@@ -25,17 +35,17 @@ class MediaCenter(DataManagementCenter):
         if not self.is_busy():
             self.set_busy()
 
-            # getting instruction details which depend on whether the instruction is from an external component
+            # getting instruction details which depend on whether the instruction is from an external component.
             if external_instruction is None:
                 instruction = self.get_next_instruction()
                 instruction_task, entry, out = self.parse_instruction(instruction)
             else:
                 instruction_task, entry, out = self.parse_instruction(external_instruction)
-                # entry must be parsed to recover it as a list of inputs
+                # entry must be parsed to recover it as a list of inputs.
                 entry = self.parse_entry(entry)
 
             # triggering the right execution for task
-            # return when the instruction is from an external component
+            # return when the instruction is from an external component.
             if instruction_task is Task.TAKE_IMAGE:
                 return self.handle_task_take_image(out)
 
@@ -49,7 +59,7 @@ class MediaCenter(DataManagementCenter):
                 self.handle_task_play_video(entry)
 
             # allow this center to receive and process further instructions
-            # already done in executions that could return something for an external component
+            # already done in executions that could return something for an external component.
             self.set_not_busy()
             self.start_watch()
 
@@ -112,6 +122,16 @@ class MediaCenter(DataManagementCenter):
 
 
 class SystemCenter(DataManagementCenter):
+    __instance = None
+
+    @staticmethod
+    def get_instance(input_device=None):
+        if not SystemCenter.__instance:
+            if input_device:
+                SystemCenter.__instance = SystemCenter(input_device)
+            else:
+                raise RuntimeError("Missing positional arguments: input_device")
+        return SystemCenter.__instance
 
     def __init__(self, input_device: InputInterface):
         super(SystemCenter, self).__init__(SystemInstruction)
@@ -122,7 +142,7 @@ class SystemCenter(DataManagementCenter):
         if not self.is_busy():
             self.set_busy()
 
-            # getting instruction details which depend on whether the instruction is from an external component
+            # getting instruction details which depend on whether the instruction is from an external component.
             if external_instruction is None:
                 instruction = self.get_next_instruction()
                 instruction_task, entry, out = self.parse_instruction(instruction)
@@ -132,7 +152,7 @@ class SystemCenter(DataManagementCenter):
                 print(entry)
 
             # triggering the right execution for task
-            # return when the instruction is from an external component
+            # return when the instruction is from an external component.
             if instruction_task is Task.OPEN:
                 self.handle_task_open(entry)
 
@@ -161,7 +181,7 @@ class SystemCenter(DataManagementCenter):
                 self.handle_task_play_pause()
 
             # allow this center to receive and process further instructions
-            # already done in executions that could return something for an external component
+            # already done in executions that could return something for an external component.
             self.set_not_busy()
             self.start_watch()
 
@@ -180,12 +200,13 @@ class SystemCenter(DataManagementCenter):
                 response_for_component = f"{time[0]}h{time[1]}"
                 self.set_not_busy()
                 return state_for_component, response_for_component
-        text_to_say_after = f"{Global.root.find('tell_time').find('before').find(Global.reformat_lang(Global.lang)).text}" + \
-                            f"{time[0]} " + \
-                            f"{Global.root.find('tell_time').find('after').find('hours').find(Global.reformat_lang(Global.lang)).text} " + \
-                            f"{Global.root.find('tell_time').find('between').find(Global.reformat_lang(Global.lang)).text} " + \
-                            f"{time[1]} " + \
-                            f"{Global.root.find('tell_time').find('after').find('minutes').find(Global.reformat_lang(Global.lang)).text}"
+        text_to_say_after = \
+        f"{Global.root.find('tell_time').find('before').find(Global.reformat_lang(Global.lang)).text}" + \
+        f"{time[0]} " + \
+        f"{Global.root.find('tell_time').find('after').find('hours').find(Global.reformat_lang(Global.lang)).text} "+\
+        f"{Global.root.find('tell_time').find('between').find(Global.reformat_lang(Global.lang)).text} " + \
+        f"{time[1]} " + \
+        f"{Global.root.find('tell_time').find('after').find('minutes').find(Global.reformat_lang(Global.lang)).text}"
         HumanMachineInterface.OutputInterface.speech = text_to_say_after
 
         # allow this center to receive and process further instructions
@@ -201,14 +222,15 @@ class SystemCenter(DataManagementCenter):
                 self.set_not_busy()
                 return state_for_component, response_for_component
         time = self.__System.get_time_specific_region(entry[2].capitalize())  # entry[2] is the region
-        # translated to english because get_time_specific() needs it
-        text_to_say_after = f"{Global.root.find('tell_time').find('before').find(Global.reformat_lang(Global.lang)).text}" + \
-                            f"{time[0]} " + \
-                            f"{Global.root.find('tell_time').find('after').find('hours').find(Global.reformat_lang(Global.lang)).text} " + \
-                            f"{Global.root.find('tell_time').find('between').find(Global.reformat_lang(Global.lang)).text} " + \
-                            f"{time[1]} " + \
-                            f"{Global.root.find('tell_time').find('after').find('minutes').find(Global.reformat_lang(Global.lang)).text} " + \
-                            f"{entry[0]} {entry[1]}"  # entry[0] is the preposition used and entry[1] is
+        # translated to english because get_time_specific() needs it.
+        text_to_say_after = \
+        f"{Global.root.find('tell_time').find('before').find(Global.reformat_lang(Global.lang)).text}" + \
+        f"{time[0]} " + \
+        f"{Global.root.find('tell_time').find('after').find('hours').find(Global.reformat_lang(Global.lang)).text}" + \
+        f"{Global.root.find('tell_time').find('between').find(Global.reformat_lang(Global.lang)).text}" + \
+        f"{time[1]} " + \
+        f"{Global.root.find('tell_time').find('after').find('minutes').find(Global.reformat_lang(Global.lang)).text}"+\
+        f"{entry[0]} {entry[1]}"  # entry[0] is the preposition used and entry[1] is
         # the name of the region in the original language
         HumanMachineInterface.OutputInterface.speech = text_to_say_after
 
@@ -271,6 +293,13 @@ class SystemCenter(DataManagementCenter):
 
 
 class NetCenter(DataManagementCenter):
+    __instance = None
+
+    @staticmethod
+    def get_instance():
+        if not NetCenter.__instance:
+            NetCenter.__instance = NetCenter()
+        return NetCenter.__instance
 
     def __init__(self):
         super(NetCenter, self).__init__(NetInstruction)
@@ -279,7 +308,7 @@ class NetCenter(DataManagementCenter):
         if not self.is_busy():
             self.set_busy()
 
-            # getting instruction details which depend on whether the instruction is from an external component
+            # getting instruction details which depend on whether the instruction is from an external component.
             if external_instruction is None:
                 instruction = self.get_next_instruction()
                 instruction_task, entry, out = self.parse_instruction(instruction)
@@ -289,14 +318,14 @@ class NetCenter(DataManagementCenter):
                 print(entry)
 
             # triggering the right execution for task
-            # return when the instruction is from an external component
+            # return when the instruction is from an external component.
             if instruction_task is Task.LOOK_UP:
                 return self.handle_task_lookup(entry, out)
             if instruction_task is Task.OPEN:
                 return self.handle_task_open_browser(out)
 
             # allow this center to receive and process further instructions
-            # already done in executions that could return something for an external component
+            # already done in executions that could return something for an external component.
             self.set_not_busy()
             self.start_watch()
 
@@ -328,10 +357,10 @@ class NetCenter(DataManagementCenter):
         _ = subprocess.Popen(args=f"python InternalComponents/Browser/main.py")
         text_to_say = Global.root.find("understood").find(
             Global.reformat_lang(Global.lang)).text + ". " + \
-                      Global.root.find("open").find("before").find(
-                          Global.reformat_lang(Global.lang)).text + " " + \
-                      Global.root.find("open").find("after").find("browser").find(
-                          Global.reformat_lang(Global.lang)).text
+            Global.root.find("open").find("before").find(
+            Global.reformat_lang(Global.lang)).text + " " + \
+            Global.root.find("open").find("after").find("browser").find(
+            Global.reformat_lang(Global.lang)).text
         HumanMachineInterface.OutputInterface.speech = text_to_say
 
         # allow this center to receive and process further instructions
