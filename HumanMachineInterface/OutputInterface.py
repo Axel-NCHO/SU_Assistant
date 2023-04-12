@@ -1,4 +1,4 @@
-from threading import Thread
+from Brain.Threading import Threading
 from time import sleep
 from sys import argv
 from PyQt5 import QtWidgets, QtCore
@@ -119,9 +119,7 @@ class OutputInterface(IOInterface):
 
     def show(self):
         # Watchman to take into account speech inquiries from other modules
-        wait_for_speech_thread = Thread(target=self.wait_for_speech)
-        wait_for_speech_thread.setDaemon(True)
-        wait_for_speech_thread.start()
+        Threading.start_thread(target=self.wait_for_speech, daemon=True)
         self.__is_shown = True
 
         self.__window.show()
@@ -130,9 +128,7 @@ class OutputInterface(IOInterface):
     def wait_for_speech(self):
         while True:
             if self.__speech != "":
-                speak_thread = Thread(target=self.speak, args=[self.__speech])
-                speak_thread.setDaemon(True)
-                speak_thread.start()
+                Threading.start_thread(target=self.speak, daemon=True, args=[self.__speech])
             if self.__speech != "":
                 self.__speech = ""
             sleep(.5)

@@ -1,4 +1,4 @@
-from threading import Thread
+from Brain.Threading import Threading
 from selectors import DefaultSelector, EVENT_READ
 from traceback import format_exc
 from socket import socket, AF_INET, SOCK_STREAM, SOL_SOCKET, SO_REUSEADDR
@@ -90,16 +90,15 @@ print("Setting up central network")
 net = Network.get_instance(reformat_lang(lang), media_center, system_center, net_center)
 
 print("Setting up server for external components")
-set_server_thread = Thread(name="set_server_thread_@alice", target=set_server_for_external_components)
-set_server_thread.setDaemon(True)
-set_server_thread.start()
-
+Threading.start_thread(name="set_server_thread_@alice",
+                       target=set_server_for_external_components,
+                       daemon=True)
 # Great user
 print("We are all set")
 great_user()
 
-wait_for_request_thread = Thread(target=wait_for_request)
-wait_for_request_thread.start()
+Threading.start_thread(name="wait_for_request_thread",
+                       target=wait_for_request)
 
 out.show()
 

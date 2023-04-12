@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 from Brain.Instructions import Instruction
 from Brain.DataStructures import Queue
-from threading import Thread
+from Brain.Threading import Threading
 from time import sleep
 
 
@@ -61,6 +61,4 @@ class DataManagementCenter(ABC):
         self.process_instructions()
 
     def start_watch(self):
-        watch_man = Thread(target=self.watch)
-        watch_man.setDaemon(True)
-        watch_man.start()
+        Threading.start_thread(target=self.watch, daemon=True)
