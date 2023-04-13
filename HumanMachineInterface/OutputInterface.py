@@ -133,6 +133,6 @@ class OutputInterface(IOInterface):
                 self.__speech = ""
             sleep(.5)
 
-    def __close(self):
+    def __close(self, event):
         self.__is_shown = False
         self.__app.exit(0)
